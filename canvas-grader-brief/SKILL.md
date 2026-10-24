@@ -101,19 +101,22 @@ Cubbridge metadata is included below as reference; the original Skill metadata a
 
 ```yaml
 name: cubbridge
-description: Build an Excel job-application tracker with company details, application dates, verified LinkedIn alumni and recruiters, outreach drafts, and assessment deadlines. Use for application inbox scans, career spreadsheets, networking at applied companies, assessment tracking, Google Calendar deadline reminders, follow-ups, and career updates.
-compatibility: Python 3.9+ standard library; Cubbie's Excel document creation and connected Gmail; web research for contacts; connected Google Calendar for approved assessment reminders.
+description: Show company, applied role, actual application date, verified LinkedIn contact names and profile links with short connection notes, and assessments with Add to Google Calendar links. Use for Gmail application scans, recruiting contacts, school alumni, networking and assessment tracking. An Excel export is optional on explicit request.
+compatibility: Python 3.9+ standard library; Cubbie's connected Gmail, Contacts and web research; optional Excel creation and Google Calendar event creation.
 ```
 
-# Cubbridge — Your applications, connections, and deadlines in Excel
+# Cubbridge — Applications, LinkedIn connections and assessments
 
-For a completed Cubbridge career report or update, return a real Excel `.xlsx` workbook
-as an attachment, plus a short text summary. Do not stop at a text briefing or a Markdown
-table. Clarification, account connection, approval and cancellation messages can be short
-text; create the workbook as soon as the required data is available. Follow the fixed
-response format at the end of this file for every completed report. The workflow sections
-are internal instructions, not an outline to reproduce in the student's reply. Keep Canvas
-requests in the separate Canvas workflow when bundled with Canvas Grader Brief.
+For every completed Cubbridge career request, respond directly in text with ONLY these
+user-facing fields for each application: (1) Company name, role applied, date applied;
+(2) verified LinkedIn contact names and their actual profile links, each with one short
+personalized connection note; and (3) assessment name and deadline, with an "Add to Google
+Calendar" link when an exact future date and time are confirmed. No counts, dashboard
+summary, company descriptions, statuses, detailed research, extra tips or additional
+questions in a completed report. Do not automatically attach an Excel workbook; create
+one only if the user explicitly requests an Excel export. Keep full evidence and other
+internal processing data private. Use the fixed output format at the end of this file.
+Canvas requests remain governed by the unchanged Canvas Grader Brief workflow above.
 
 Use Cubbie's connected Gmail, web, document creation, Contacts and Google Calendar abilities
 in plain words. Scripts cannot call those abilities. This Skill needs no separate server,
@@ -132,11 +135,12 @@ workbook-conversion service. Calendar entries use the student's approved Google 
   alumni matches use the correct institution. Continue independent application research
   while awaiting school information; label alumni research as awaiting school confirmation.
 - Explain briefly that minimal application evidence, assessment state, verified contact
-  details and report files are saved privately to keep the tracker current. Resume, target
-  roles and networking preferences are optional; never invent qualifications if absent.
+  details and, when requested, export files are saved privately to keep the tracker current.
+  Resume, target roles and networking preferences are optional; never invent qualifications
+  if absent.
 - If Gmail is disconnected, ask the student to connect Google through Cubbie or provide
   the hiring messages. Never ask for credentials in chat. Without live access, label the
-  workbook as based on supplied messages or saved data, not a fresh inbox scan.
+  response as based on supplied messages or saved data, not a fresh inbox scan.
 
 ## 2. Discover and maintain applications
 
@@ -155,7 +159,8 @@ workbook-conversion service. Calendar entries use the student's approved Google 
    or confirmed by the student. Include `application_date_evidence`. Otherwise leave it
    unknown and show `first_confirmation_at` separately as “Confirmation received”. Never
    label the first recruiter response, assessment date or email receipt as the application
-   date. Conflicting source dates need clarification and remain visible in the workbook.
+   date. For conflicting or unsupported dates, show "Date applied: Not verified" in
+   the response and retain the conflicting source dates only in the private ledger.
 5. Prepare a minimal JSON input file in the student's HOME (directory mode 700, file mode
    600). Do not interpolate mail text into shell commands. Run:
    `python3 scripts/pipeline.py scan --input <private-json-file> --now <student-ISO-time>`.
@@ -165,7 +170,7 @@ workbook-conversion service. Calendar entries use the student's approved Google 
    Later interview mail does not prove an older assessment was completed. Record an
    assessment invitation once; subsequent copies or reminders about that same assessment
    are `note` records, not additional assessment invitations. Distinct tests get distinct
-   source IDs. Read the full `assessments` array when preparing the tracker.
+   source IDs. Read the full `assessments` array when preparing the response.
 7. A missing confirmation does not mean the student never applied. Report what the approved
    inbox range establishes; preserve previously tracked applications unless deletion is
    requested. Closed applications stay in the inventory with no unsolicited outreach.
@@ -196,30 +201,33 @@ or describe a public person as already connected to the student.
 If a profile is inaccessible or a match cannot be verified, write “No verified match found”
 or “Research incomplete” with the reason. Do not represent failed research as proof that
 no alumni/recruiters exist. Reuse verified company research across applications while
-keeping role-specific messages separate. For large inventories, use a background task,
-report coverage, and send the workbook with explicit gaps rather than silently skipping rows.
+keeping role-specific messages separate. For large inventories, process work in bounded batches and
+report incomplete coverage clearly rather than silently skipping companies.
 
 ## 4. Draft a message for each verified LinkedIn contact
 
-Include a personalized connection note and a longer follow-up draft in the workbook.
-Ground each in the actual company, applied role, verified contact details and the student's
-real background. Prefer a short connection note (aim at 200 characters or fewer), avoiding
-claims about current LinkedIn product limits. Alumni notes can mention a verified shared
-school; recruiter notes can mention the actual application. Do not pretend they already
-know each other, invent referrals or qualifications, or say an application was reviewed.
+For each verified LinkedIn profile, generate exactly one short personalized connection
+note (aim at 200 characters or fewer). In the default response show only the contact's
+name, their verified LinkedIn profile link and this note. Ground it in the actual company,
+applied role, verified contact details and the student's real background. Alumni notes can
+mention a verified shared school; recruiter notes can mention the actual application.
+Do not invent prior familiarity, referrals, qualifications or an application review.
 
 Messages are drafts for the student to review and send manually on LinkedIn. No connection
 requests or messages are sent as part of report generation. Do not store any draft as sent.
-For Gmail outreach, show exact recipients, subject, body and attachments and obtain approval
-for that version before sending. Edits require renewed approval. Check Sent after an uncertain
+Only perform a separate Gmail outreach workflow when explicitly requested; never include
+cold-email content in the default three-field response. For Gmail outreach, show exact
+recipients, subject, body and attachments and obtain approval for that version before sending. Edits require renewed approval. Check Sent after an uncertain
 send result before retrying. Record only confirmed sent email follow-ups as `follow_up_sent`.
 
 ## 5. Assessment tracking and Google Calendar reminders
 
 For every assessment, retain the company, role, invitation/source ID, assessment description,
-status, source link, exact deadline text and confirmed deadline in the workbook. Use the
+status, source link, exact deadline text and confirmed deadline internally. Use the
 engine's separate `assessments` list; absence means “No assessment found in checked evidence”,
-not proof that no assessment exists. Keep completed, ambiguous and past-due rows visible.
+not proof that no assessment exists. Show assessment name and deadline in the response;
+include a Calendar add-event link only for a confirmed future deadline. For ambiguous dates
+show "Deadline not verified — Calendar link unavailable" instead of inventing a date.
 
 - Only calculate a deadline when date, time and zone are unambiguous or confirmed by the
   student. “Within 72 hours of this email” may use `relative_hours: 72` with verified receipt
@@ -227,12 +235,26 @@ not proof that no assessment exists. Keep completed, ambiguous and past-due rows
   instructions require clarification. Never invent 11:59 PM or treat business days as hours.
 - Preserve uncertain `deadline_text` without a calculated date. After confirmation run:
   `python3 scripts/pipeline.py resolve --message-id <source-id> --deadline-at <confirmed-ISO-time> --deadline-text <confirmed-interpretation> --now <student-ISO-time>`.
-- For each pending, confirmed future deadline, propose a Google Calendar event titled
+- For the default response, provide a clickable Google Calendar prefilled-event URL for each
+  confirmed future assessment deadline, without needing a connected Calendar account.
+  Format: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=<ENCODED_TITLE>&dates=<START_UTC>/<END_UTC>&ctz=<ENCODED_IANA_ZONE>&details=<ENCODED_SOURCE_OR_DESCRIPTION>`.
+  Percent-encode query values; use UTC `YYYYMMDDTHHMMSSZ` timestamps for dates and a 15-minute
+  event beginning at the confirmed deadline. Use title "Assessment due — Company — Role".
+  Keep the displayed deadline in the student's local date/time and IANA zone, and include
+  only verified assessment facts in the URL. The link opens a prefilled event for the
+  student to review and save; it does NOT create an event or configure reminders.
+  If the deadline's absolute date, time or timezone cannot be confirmed, do not generate a
+  Calendar link. For completed or past-due assessments, do not offer misleading future-event
+  links. Never invent timestamps, zones, URLs or event creation status.
+- Only if the student separately requests Cubbie to create reminders or Calendar events,
+  follow the connected-Calendar approval and verification workflow below. The default
+  three-field report is not authorization to create events.
+- If direct Calendar event creation was explicitly requested, propose an event titled
   “Assessment due — <Company> — <Role>” at the exact deadline in the student's zone, with
   a short duration and reminders (suggest 24 hours and 2 hours before when still in the
   future). Include the source link and stable marker `Cubbridge assessment: <message-id>`
-  in its description. Add no attendees and never invite recruiters or alumni.
-- Show calendar, title, due date/time/zone and reminder offsets; obtain the student's yes
+  in its description. Only use a confirmed future deadline. Add no attendees and never invite recruiters or alumni.
+- For direct event creation only, show calendar, title, due date/time/zone and reminder offsets; obtain the student's yes
   before creating or updating events. One confirmation may cover an explicitly listed
   batch. Report generation alone is not Calendar authorization. If the student has already
   approved those exact events and settings, proceed without asking again.
@@ -248,72 +270,53 @@ not proof that no assessment exists. Keep completed, ambiguous and past-due rows
 - On subsequent updates, recheck recorded events through Calendar. If one was deleted or
   changed, report the discrepancy and ask before restoring/updating it. For completed or
   closed applications, review existing events and ask before changing or cancelling them.
-- If Calendar is disconnected or fails, attach the workbook with “Pending connection”,
-  “Pending approval” or “Creation failed” as appropriate; ask to connect/retry. Never say a
-  reminder was set without confirmation from Calendar. Past-due dates require availability
-  verification rather than a new past event.
+- If Calendar is disconnected, still provide a prefilled Add to Google Calendar link for
+  confirmed future deadlines. If the user explicitly requested event creation and it fails,
+  say it was not created and offer the add-event link instead. Never claim that opening a
+  link or generating it created an event or a reminder.
 - When the student confirms completion, run:
   `python3 scripts/pipeline.py complete --message-id <assessment-source-id> --now <student-ISO-time>`.
   Completion clears the action without inventing a new hiring stage. Help with preparation
   from actual instructions; do not complete the student's graded hiring assessment.
 
-## 6. Create and deliver the Excel workbook
+## 6. Optional Excel export (only on request)
 
-Follow `references/workbook-spec.md`. Use Cubbie's Excel document creation ability to make
-an actual `.xlsx` file with these sheets:
+By default, send ONLY the compact chat response described in "Required response format".
+Do not generate or attach Excel unless the student explicitly asks for a workbook or
+Excel tracker. When Excel is requested, use Cubbie's Excel creation ability to make a real
+`.xlsx` workbook with these three sheets and NO additional user-facing columns:
 
-1. Applications: company details, role, actual application date and evidence, confirmation
-   received separately, current stage, assessment summary, next action, verified sources.
-2. LinkedIn Connections: company/application key, contact, alumni/recruiter category,
-   verified school/current role, LinkedIn URL, evidence URLs, checked time, connection note
-   and longer message draft. Missing matches stay explicitly labeled.
-3. Assessments: one row per assessment, status, confirmed local deadline and zone, source,
-   Calendar/reminder state, actual event link/ID, verified reminder offsets and checked time.
-4. Report Notes: date range, local zone, school, checked time, source coverage, unresolved
-   dates, unverified contacts, Calendar approvals/failures and sample/live-data label.
+1. Applications: Company name | Role applied | Date applied.
+2. LinkedIn Connections: Company name | Contact name | LinkedIn profile link |
+   Short connection note.
+3. Assessments: Company name | Assessment | Deadline (local time and time zone) |
+   Add to Google Calendar link.
 
-### Keep the workbook easy to scan
-
-- Use the four sheet names above, in that order, with one header row, filters, frozen
-  headers, readable column widths and wrapped text. No merged cells in the data tables.
-- Put the useful fields first: company, role, application date and status in Applications;
-  company, contact name, alumni/recruiter category, LinkedIn link and message draft in
-  LinkedIn Connections; company, role, deadline, time zone and reminder status in Assessments.
-  Keep required identifiers, source evidence and technical details in the later columns.
-- Use one row per application, per application/contact pair, and per assessment respectively.
-  Do not combine several people, roles or message drafts into a single cell. Deduplicate rows.
-- Sort Applications by next action urgency, Assessments by confirmed upcoming deadline,
-  and Connections by company then contact category. Keep ambiguous, past-due and completed
-  assessments clearly labeled; unknown dates must never look like scheduled deadlines.
-- Show human-readable statuses such as “Awaiting approval” and “Deadline needs confirmation”,
-  not raw ledger values such as `not_recorded` or `deadline_changed_review`. Use consistent
-  date formatting and an explicit time-zone column. Unknown values are “Not verified”.
-- Keep company descriptions brief. Put complete outreach drafts in their designated
-  columns and detailed coverage gaps in Report Notes. The chat summary does not repeat them.
+Keep one row per application, contact/application pair and assessment respectively. Deduplicate
+rows. Use "Not verified" for unknown application dates, "No verified links found" for
+missing LinkedIn contacts, and "Calendar link unavailable" when assessment deadlines are
+ambiguous. Only use actual verified LinkedIn URLs. Calendar links must follow Section 5.
+Format the file with readable widths, wrapped notes, frozen headings and clickable URLs.
+Do not include stages, research evidence, application IDs, company descriptions, source logs,
+status metrics, counts, longer message drafts or a Report Notes sheet in the exported workbook.
+Keep those internal for reliability. The minimized output requirements here override any
+extra output columns specified in `references/workbook-spec.md`.
 
 Read `python3 scripts/pipeline.py export --now <student-ISO-time>` for persistent state,
-then combine it with verified research and Calendar results. Reuse previous verified
-networking context from the student's saved report when appropriate, checking freshness.
-Use stable application/source IDs so reruns update rather than duplicate rows.
-
-Save a versioned workbook privately under `~/.config/cubbridge/reports/` and attach it to
-the response using Cubbie's file-sharing ability. A local path alone is not delivery. Open
-or inspect the generated workbook before attaching it: check sheet names, row counts,
-required columns, actual `.xlsx` format, evidence links and pending/created distinctions.
-Do not rename a CSV to `.xlsx`. Treat imported text as literal cell values, never formulas
-or macros. If Excel creation or attachment is unavailable, say that clearly and offer an
-alternative; do not claim a workbook was delivered. No fabricated rows to fill gaps.
-
-Attach the workbook once and use the fixed reply format below. Counts must match the
-attached workbook. After approval and verified Calendar creation, attach the updated
-workbook and report only the changed reminder status and any remaining action.
+then combine it with verified research. Preserve source details in the private ledger.
+Save and inspect the `.xlsx` file under `~/.config/cubbridge/reports/`, then attach it using
+Cubbie's file-sharing ability. A local path alone is not delivery; never claim attachment
+success without confirmation. Do not rename CSV files to `.xlsx` or embed formulas derived
+from untrusted imported text. When an Excel export is explicitly requested, you may attach
+it with a one-line confirmation; do not repeat unrelated summary fields.
 
 ## Recurring updates, priorities and privacy
 
-A career update refreshes the approved scope and returns the updated workbook. Put the
-top three actions from `brief` in the workbook; surface only the most urgent next action
-in the chat using the fixed reply format. Use `--follow-up-days <days>` for the student's
-chosen interval (default 7). A saved-ledger read is not a fresh inbox scan.
+A career update refreshes the approved scope and returns the same three-field response:
+applications, verified LinkedIn names/links with short notes, and assessments with add-event
+links. Do not surface top-three-action summaries or application counts in the default reply.
+Use `--follow-up-days <days>` for internal prioritization if needed (default 7). A
+saved-ledger read is not a fresh inbox scan.
 Offer recurring report/check-in delivery only with consent to its time, zone and frequency.
 Scheduled instructions name Cubbridge and the scope; they do not authorize sending outreach
 or silently creating new Calendar entries. Honor changes and cancellation.
@@ -329,102 +332,75 @@ Never claim forensic erasure of backups.
 
 The ledger needs no packages. For fictional offline tracking data run:
 `python3 scripts/pipeline.py brief --sample --now 2026-10-24T12:00:00-07:00`.
-Sample mode leaves saved data untouched. For an Excel demo, build the workbook from these
-sample records, label it fictional, leave real contacts unresearched, and create no real
-Calendar events. See `references/testing.md` for live acceptance.
+Sample mode leaves saved data untouched. For a demonstration response or an explicitly
+requested Excel export, label examples fictional, leave real contacts unresearched, and
+create no actual Calendar events. See `references/testing.md` for live acceptance.
 
-## Required response format
+## Required response format — only three information groups
 
-The student should understand the result, the urgent deadline and the next step at a glance.
-Apply this presentation contract to the workflow above. Preserve accurate reporting,
-permissions and evidence requirements while keeping the reply short.
+For every completed Cubbridge request, give one block for each distinct application. Include
+ONLY the following visible information, in this order:
 
-### Completed report: attachment, summary, next step
+**Company name:** <verified company>
+**Role applied:** <verified role>
+**Date applied:** <verified submission date, or "Not verified">
 
-Send one actual Excel attachment and one compact accompanying message. Aim for at most
-120 words and 12 nonempty lines. Use plain text labels and blank lines between the three
-blocks below; do not print Markdown headings, tables, bold markers, code fences or nested
-lists. Do not add decorative emojis or repeat the same result in multiple messages.
+**LinkedIn connections:**
+- <Verified contact name> — <actual LinkedIn profile URL>
+  Note: <brief, personalized LinkedIn connection request message>
+- Repeat for each verified relevant contact. When none can be verified, write
+  "No verified LinkedIn links found." Do not invent a name, profile URL, email or
+  connection relationship. Only call someone "your connection" if their first-degree
+  connection status is confirmed. Otherwise call them a "suggested contact."
 
-1. Delivery and counts: say the Excel tracker is attached only after successful attachment.
-   Give application count, unique verified contact count and upcoming assessment count,
-   in that order. Count only pending assessments with confirmed future deadlines as
-   upcoming. Duplicate contact rows across applications do not count as additional people.
-2. Attention and Calendar: show the earliest confirmed pending deadline with company,
-   role, explicit local date, time and zone. If a past-due or unresolved deadline is the
-   more urgent issue, show that instead with a clear label; do not guess a date. Surface
-   at most two urgent issues. Then give the actual Calendar/reminder status on its own line.
-3. Next step: end with one concrete question only when input or approval is needed.
-   If nothing requires a response, end with “No action needed right now.” only when
-   supported by the checked scope. Do not add unrelated offers or several follow-up questions.
+**Assessments:**
+- <assessment name> — <confirmed date, time and student's time zone>
+  Add to Google Calendar: <verified prefilled-event link from Section 5>
+- Repeat for each relevant assessment. For unresolved deadline information, instead write
+  "<assessment name> — Deadline not verified; Calendar link unavailable."
+- When there are no assessments in the checked evidence, say
+  "No assessments found in checked messages."
 
-Example layout using fictional counts and a fictional company (never copy these as facts):
+For additional applications, repeat the block in the same format. Display application dates
+only if actual submission dates are verified or user-confirmed; otherwise "Not verified".
+Never substitute Gmail confirmation received time for the date applied. Present verified
+LinkedIn profile URLs as links with the person's name; do not show company websites, research
+URLs, extra contact biographies, internal confidence, date evidence or technical identifiers.
+The notes must be ready to paste into LinkedIn and should preferably be <= 200 characters.
+If a contact is verified but lacks an actual LinkedIn URL, exclude it from this output.
 
-```text
-Your Excel tracker is attached.
-Applications: 12
-Verified contacts: 6
-Upcoming assessments: 2
+Do not add headings such as "Career Briefing", counts, statuses, action priorities, extra
+recommendations, long messages, cold emails, calendar status, unnecessary explanatory text,
+questions or an automatic workbook attachment. Do not claim Calendar events were created:
+links merely allow students to open a prefilled event and save it themselves.
 
-Next deadline: ExampleCo — Software Intern
-October 26, 2026, 10:00 AM MST
-Calendar: 2 reminders awaiting your approval.
+For a disconnected Gmail account, failed search, incomplete coverage, or required clarification,
+provide one brief factual failure/clarification message and the next necessary step instead
+of fabricating the completed report. An explicit request for an Excel export, Gmail sending,
+or direct Calendar creation invokes that separate approved action without expanding the
+standard completed-report fields.
 
-Review the two proposed events in Assessments. Add them to your Google Calendar?
-```
+### Example only — fictional data; never present as real findings
 
-The final question is valid only when the workbook has already shown the exact calendar,
-event titles, deadline dates/times/zones and proposed reminder offsets for that batch.
-If those details were not provided, show them before requesting approval; the word/line
-limit must not conceal what the student is approving. A short approval preview may be
-sent as a separate message, with one event per block and one question for the listed batch.
+Company name: ExampleCo
+Role applied: Software Engineering Intern
+Date applied: October 22, 2026
 
-Omit the deadline block when no assessment was found and say “No assessments found in the
-checked messages.” If deadlines are unknown, use “Assessment deadline: needs confirmation.”
-Never invent a deadline to fill the template. For a partial search, add one short line:
-“Coverage: partial; details are in Report Notes.” Put additional caveats in the workbook,
-except any issue that affects the student's immediate decision or Calendar approval.
+LinkedIn connections:
+- Alex Example — https://www.linkedin.com/in/example-placeholder/
+  Note: Hi Alex, I recently applied to ExampleCo's SWE internship and would love to hear about your experience there. Would you be open to connecting?
 
-### Use clear, truthful Calendar labels
+Assessments:
+- Coding assessment — October 28, 2026, 10:00 AM America/Phoenix
+  Add to Google Calendar: <link generated from the verified deadline, not a placeholder>
 
-- “Calendar: 2 reminders set.” Only after verifying actual events AND reminder settings.
-- “Calendar: 2 reminders awaiting your approval.” Nothing created yet.
-- “Calendar: connect Google Calendar to schedule reminders.” Account unavailable.
-- “Calendar: event created; reminder settings not confirmed.” An event alone is not a reminder.
-- “Calendar: deadline changed; existing event needs review.” No silent claim of an update.
-- “Calendar: creation failed; no confirmed reminder.” A failed request is not success.
-- “Calendar: not rechecked; showing saved status.” Saved state is not live verification.
+The example's person and URL are intentionally fictional. Never return fictional contacts or
+placeholder Calendar links in a real reply.
 
-Replace example counts with real counts. For mixed results, state them separately on one
-line, such as “Calendar: 1 reminder set; 2 awaiting approval.” Do not describe an entire
-batch as scheduled when only some events succeeded. Unknown deadlines require confirmation
-before any scheduling; show that dependency instead of asking for calendar approval early.
+### Final output check
 
-### Clarifications, updates and failures
-
-- Ask only the next necessary question. For example: “Which school should I use for alumni
-  matches?” Do not bundle school, time zone, date range, resume and calendar questions.
-- For a long-running task, send one brief progress message such as “I’m checking your
-  applications and preparing the Excel tracker.” Give another update only for a material
-  delay, blocker or changed scope. Do not stream every search result or tool step.
-- After a small update or Calendar approval, attach the refreshed workbook and state what
-  changed in two to four lines. Do not repeat onboarding, the full counts or every prior
-  finding. Example: “Updated tracker attached. Two assessment reminders are set. Event links
-  and reminder times are in Assessments.” Use that wording only after verification.
-- For a missing account, failed search, script failure or attachment problem, explain the
-  user-visible problem in one sentence and give one recovery step or question. Do not use
-  the successful-report template or claim a file was delivered when creation/attachment failed.
-- If a scan finds zero applications, attach a headers-only workbook with the checked scope
-  in Report Notes; report zero found in that scope, not that the student never applied.
-- If the student asks to see one LinkedIn draft in chat, give the contact/company label,
-  then the complete draft as its own short message. Keep other contacts and drafts in Excel.
-- Keep JSON, shell commands, database paths, provider IDs, stack traces, search query logs,
-  this Skill's section titles and implementation notes out of ordinary student-facing replies.
-  Provide technical diagnostics only when the student explicitly requests them.
-
-### Final check before sending
-
-Confirm the attachment is real, the counts match it, the reply follows the three-block
-layout, every displayed deadline has a zone, Calendar labels reflect actual results,
-and there is no more than one unanswered next-step question. Remove repeated explanations
-and move long contact lists, drafts, evidence and secondary actions into the workbook.
+Before responding, confirm each visible line belongs to one of the three required groups,
+application dates are supported, LinkedIn names and URLs are verified, connection notes do
+not invent relationships, and every live Calendar link corresponds to a confirmed future
+assessment deadline with the correct time zone. Keep all other details internal unless the
+student specifically asks for them.
