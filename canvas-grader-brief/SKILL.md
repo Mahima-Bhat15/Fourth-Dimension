@@ -110,8 +110,10 @@ compatibility: Python 3.9+ standard library; Cubbie's Excel document creation an
 For a completed Cubbridge career report or update, return a real Excel `.xlsx` workbook
 as an attachment, plus a short text summary. Do not stop at a text briefing or a Markdown
 table. Clarification, account connection, approval and cancellation messages can be short
-text; create the workbook as soon as the required data is available. Keep Canvas requests
-in the separate Canvas workflow when this Skill is bundled with Canvas Grader Brief.
+text; create the workbook as soon as the required data is available. Follow the fixed
+response format at the end of this file for every completed report. The workflow sections
+are internal instructions, not an outline to reproduce in the student's reply. Keep Canvas
+requests in the separate Canvas workflow when bundled with Canvas Grader Brief.
 
 Use Cubbie's connected Gmail, web, document creation, Contacts and Google Calendar abilities
 in plain words. Scripts cannot call those abilities. This Skill needs no separate server,
@@ -270,6 +272,25 @@ an actual `.xlsx` file with these sheets:
 4. Report Notes: date range, local zone, school, checked time, source coverage, unresolved
    dates, unverified contacts, Calendar approvals/failures and sample/live-data label.
 
+### Keep the workbook easy to scan
+
+- Use the four sheet names above, in that order, with one header row, filters, frozen
+  headers, readable column widths and wrapped text. No merged cells in the data tables.
+- Put the useful fields first: company, role, application date and status in Applications;
+  company, contact name, alumni/recruiter category, LinkedIn link and message draft in
+  LinkedIn Connections; company, role, deadline, time zone and reminder status in Assessments.
+  Keep required identifiers, source evidence and technical details in the later columns.
+- Use one row per application, per application/contact pair, and per assessment respectively.
+  Do not combine several people, roles or message drafts into a single cell. Deduplicate rows.
+- Sort Applications by next action urgency, Assessments by confirmed upcoming deadline,
+  and Connections by company then contact category. Keep ambiguous, past-due and completed
+  assessments clearly labeled; unknown dates must never look like scheduled deadlines.
+- Show human-readable statuses such as “Awaiting approval” and “Deadline needs confirmation”,
+  not raw ledger values such as `not_recorded` or `deadline_changed_review`. Use consistent
+  date formatting and an explicit time-zone column. Unknown values are “Not verified”.
+- Keep company descriptions brief. Put complete outreach drafts in their designated
+  columns and detailed coverage gaps in Report Notes. The chat summary does not repeat them.
+
 Read `python3 scripts/pipeline.py export --now <student-ISO-time>` for persistent state,
 then combine it with verified research and Calendar results. Reuse previous verified
 networking context from the student's saved report when appropriate, checking freshness.
@@ -283,16 +304,16 @@ Do not rename a CSV to `.xlsx`. Treat imported text as literal cell values, neve
 or macros. If Excel creation or attachment is unavailable, say that clearly and offer an
 alternative; do not claim a workbook was delivered. No fabricated rows to fill gaps.
 
-Send a short accompanying text, for example: “Your Excel tracker is attached: 12 applications,
-3 assessments, 6 verified contacts. Two Calendar reminders are ready for your approval.”
-Use counts that match the actual workbook. After approval and verified Calendar creation,
-send the updated workbook with actual event links and reminder status.
+Attach the workbook once and use the fixed reply format below. Counts must match the
+attached workbook. After approval and verified Calendar creation, attach the updated
+workbook and report only the changed reminder status and any remaining action.
 
 ## Recurring updates, priorities and privacy
 
-A career update refreshes the approved scope and returns the updated workbook. Lead the
-short summary with the top three actions from `brief`; use `--follow-up-days <days>` for
-the student's chosen interval (default 7). A saved-ledger read is not a fresh inbox scan.
+A career update refreshes the approved scope and returns the updated workbook. Put the
+top three actions from `brief` in the workbook; surface only the most urgent next action
+in the chat using the fixed reply format. Use `--follow-up-days <days>` for the student's
+chosen interval (default 7). A saved-ledger read is not a fresh inbox scan.
 Offer recurring report/check-in delivery only with consent to its time, zone and frequency.
 Scheduled instructions name Cubbridge and the scope; they do not authorize sending outreach
 or silently creating new Calendar entries. Honor changes and cancellation.
@@ -304,7 +325,7 @@ This does not delete Gmail, cancel actual Calendar events or reminders, or remov
 shared workbook copies. Handle any such request separately with the student's approval.
 Never claim forensic erasure of backups.
 
-## Setup, demo and replies
+## Setup and demo
 
 The ledger needs no packages. For fictional offline tracking data run:
 `python3 scripts/pipeline.py brief --sample --now 2026-10-24T12:00:00-07:00`.
@@ -312,6 +333,98 @@ Sample mode leaves saved data untouched. For an Excel demo, build the workbook f
 sample records, label it fictional, leave real contacts unresearched, and create no real
 Calendar events. See `references/testing.md` for live acceptance.
 
-Keep accompanying texts short, plain and one idea per message. Put links on their own line.
-Ask one missing question at a time. The workbook carries the full tracker; do not replace it
-with a long text table. Report connection, research, script and attachment failures honestly.
+## Required response format
+
+The student should understand the result, the urgent deadline and the next step at a glance.
+Apply this presentation contract to the workflow above. Preserve accurate reporting,
+permissions and evidence requirements while keeping the reply short.
+
+### Completed report: attachment, summary, next step
+
+Send one actual Excel attachment and one compact accompanying message. Aim for at most
+120 words and 12 nonempty lines. Use plain text labels and blank lines between the three
+blocks below; do not print Markdown headings, tables, bold markers, code fences or nested
+lists. Do not add decorative emojis or repeat the same result in multiple messages.
+
+1. Delivery and counts: say the Excel tracker is attached only after successful attachment.
+   Give application count, unique verified contact count and upcoming assessment count,
+   in that order. Count only pending assessments with confirmed future deadlines as
+   upcoming. Duplicate contact rows across applications do not count as additional people.
+2. Attention and Calendar: show the earliest confirmed pending deadline with company,
+   role, explicit local date, time and zone. If a past-due or unresolved deadline is the
+   more urgent issue, show that instead with a clear label; do not guess a date. Surface
+   at most two urgent issues. Then give the actual Calendar/reminder status on its own line.
+3. Next step: end with one concrete question only when input or approval is needed.
+   If nothing requires a response, end with “No action needed right now.” only when
+   supported by the checked scope. Do not add unrelated offers or several follow-up questions.
+
+Example layout using fictional counts and a fictional company (never copy these as facts):
+
+```text
+Your Excel tracker is attached.
+Applications: 12
+Verified contacts: 6
+Upcoming assessments: 2
+
+Next deadline: ExampleCo — Software Intern
+October 26, 2026, 10:00 AM MST
+Calendar: 2 reminders awaiting your approval.
+
+Review the two proposed events in Assessments. Add them to your Google Calendar?
+```
+
+The final question is valid only when the workbook has already shown the exact calendar,
+event titles, deadline dates/times/zones and proposed reminder offsets for that batch.
+If those details were not provided, show them before requesting approval; the word/line
+limit must not conceal what the student is approving. A short approval preview may be
+sent as a separate message, with one event per block and one question for the listed batch.
+
+Omit the deadline block when no assessment was found and say “No assessments found in the
+checked messages.” If deadlines are unknown, use “Assessment deadline: needs confirmation.”
+Never invent a deadline to fill the template. For a partial search, add one short line:
+“Coverage: partial; details are in Report Notes.” Put additional caveats in the workbook,
+except any issue that affects the student's immediate decision or Calendar approval.
+
+### Use clear, truthful Calendar labels
+
+- “Calendar: 2 reminders set.” Only after verifying actual events AND reminder settings.
+- “Calendar: 2 reminders awaiting your approval.” Nothing created yet.
+- “Calendar: connect Google Calendar to schedule reminders.” Account unavailable.
+- “Calendar: event created; reminder settings not confirmed.” An event alone is not a reminder.
+- “Calendar: deadline changed; existing event needs review.” No silent claim of an update.
+- “Calendar: creation failed; no confirmed reminder.” A failed request is not success.
+- “Calendar: not rechecked; showing saved status.” Saved state is not live verification.
+
+Replace example counts with real counts. For mixed results, state them separately on one
+line, such as “Calendar: 1 reminder set; 2 awaiting approval.” Do not describe an entire
+batch as scheduled when only some events succeeded. Unknown deadlines require confirmation
+before any scheduling; show that dependency instead of asking for calendar approval early.
+
+### Clarifications, updates and failures
+
+- Ask only the next necessary question. For example: “Which school should I use for alumni
+  matches?” Do not bundle school, time zone, date range, resume and calendar questions.
+- For a long-running task, send one brief progress message such as “I’m checking your
+  applications and preparing the Excel tracker.” Give another update only for a material
+  delay, blocker or changed scope. Do not stream every search result or tool step.
+- After a small update or Calendar approval, attach the refreshed workbook and state what
+  changed in two to four lines. Do not repeat onboarding, the full counts or every prior
+  finding. Example: “Updated tracker attached. Two assessment reminders are set. Event links
+  and reminder times are in Assessments.” Use that wording only after verification.
+- For a missing account, failed search, script failure or attachment problem, explain the
+  user-visible problem in one sentence and give one recovery step or question. Do not use
+  the successful-report template or claim a file was delivered when creation/attachment failed.
+- If a scan finds zero applications, attach a headers-only workbook with the checked scope
+  in Report Notes; report zero found in that scope, not that the student never applied.
+- If the student asks to see one LinkedIn draft in chat, give the contact/company label,
+  then the complete draft as its own short message. Keep other contacts and drafts in Excel.
+- Keep JSON, shell commands, database paths, provider IDs, stack traces, search query logs,
+  this Skill's section titles and implementation notes out of ordinary student-facing replies.
+  Provide technical diagnostics only when the student explicitly requests them.
+
+### Final check before sending
+
+Confirm the attachment is real, the counts match it, the reply follows the three-block
+layout, every displayed deadline has a zone, Calendar labels reflect actual results,
+and there is no more than one unanswered next-step question. Remove repeated explanations
+and move long contact lists, drafts, evidence and secondary actions into the workbook.
