@@ -83,3 +83,13 @@ See assets/sample-card.json for a **fictional** example. It is deliberately not 
 Default real output: `~/.config/canvas-grader-brief/cards/brief.png`. Sample output: `~/.config/canvas-grader-brief/cards/sample.png`. Additional pages have a numeric suffix. Use `--output /absolute/path/report.png` to choose another location. Parent directories are created. Explicit output files may be replaced; do not choose an input path or a path containing unrelated work.
 
 Exit 0 prints `{"images": ["/absolute/path/brief.png"], "sample": false}`. Exit 1 reports a data/file/rendering error. Argument errors use exit 2. No user state except the requested image artifacts is saved. Dates are converted before drawing, using the supplied time zone rather than the sandbox clock.
+
+## To Do text example
+
+Example reply format using fictional data:
+
+CS 201 — Lab 4
+To Do: Grade 12 submissions
+Student submissions due: Nov 1, 2026, 11:59 pm MST
+Grading deadline: Not specified
+

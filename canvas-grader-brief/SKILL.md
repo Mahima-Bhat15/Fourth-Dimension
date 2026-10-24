@@ -64,14 +64,7 @@ For "skip large files", an upload-size error, or a partially synced Canvas conne
 7. Show a needs-grading count only under that label. Missing counts are unavailable, not zero. Do not treat the number of To Do entries as the number of student submissions. Canvas may expose additional grading count categories depending on enabled institution features; preserve their labels and scope rather than estimating missing categories. Use the earlier count rules for exact submitted-student totals.
 8. Keep old grading tasks visible when the user asks for a backlog, even if the student due date passed. Separate dated upcoming work, older pending grading, and tasks with no verified deadline. Offer to order undated grading work by the user's priority; do not call it overdue without a grading deadline. Read only: never dismiss, ignore, complete, or hide To Do items, change a planner item, or submit/grade work in this workflow.
 
-Example reply format using fictional data:
-
-CS 201 — Lab 4
-To Do: Grade 12 submissions
-Student submissions due: Nov 1, 2026, 11:59 pm MST
-Grading deadline: Not specified
-
-Follow this format only when the fields are verified. Include a checked-at time and label browser, connected Canvas, or supplied snapshot as the source.
+For To Do reply examples, see references/card-format.md. Use only verified fields. Include a checked-at time and label browser, connected Canvas, or supplied snapshot as the source.
 
 ## Visual cards
 
