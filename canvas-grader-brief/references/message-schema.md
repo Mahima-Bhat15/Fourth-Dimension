@@ -40,3 +40,35 @@ be clarified before import, rather than relying on message-ID ordering.
 There is no network client, remote sync, separate OAuth or PostgreSQL dependency in the
 Skill. Its SQLite ledger is per student's HOME. Secure permissions limit local access;
 this is not a claim of application-level encrypted ledger storage.
+
+## Application dates and independent assessment tracking
+
+Optional `application_date` is a date-only string in `YYYY-MM-DD` form backed by required
+`application_date_evidence` (a short quote or clearly attributed student confirmation).
+Do not infer it from `received_at`. Omit both when unknown. The report exposes actual
+application date separately from `first_confirmation_at`; conflicting explicit dates
+are returned under `application_date_conflicts` for clarification.
+
+An input's existing source ID remains immutable. For a later student clarification,
+record a separate `note` with a clearly labeled, stable user-supplied evidence ID rather
+than rewriting the original message or inventing a Gmail ID. Existing records without
+these optional fields remain valid and deduplicate normally.
+
+`brief` and `export` now include `assessments`, independent of the latest hiring stage.
+Each actual invitation is an assessment record identified by its source message ID;
+reminders for that same test should be notes, not duplicate invitations. `complete`
+marks the chosen invitation handled. Closed applications retain their assessment rows
+but suppress new assessment actions. Separate confirmed tests remain separate rows.
+
+`calendar-record` saves real Calendar results only after Cubbie creates or verifies an
+approved event through connected Google Calendar. It never talks to Google itself.
+Pass the real calendar/event IDs and URL, the exact confirmed future deadline, IANA
+zone, and verified reminder lead times in integer minutes (zero to one week). An empty
+list records an event without claiming reminders were configured. Calendar records are
+keyed by assessment ID; re-recording updates the existing reference. A changed deadline
+or completed assessment flags the existing event for review instead of claiming it was
+updated/cancelled. The table is added automatically to existing ledgers without deleting
+application data. Export includes event references; ledger deletion removes references,
+not the external Google Calendar events.
+
+Workbook layout and data-quality requirements: `references/workbook-spec.md`.

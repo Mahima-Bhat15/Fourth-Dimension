@@ -6,9 +6,10 @@ import json
 import os
 import sqlite3
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo
 
 STATUSES = {
     "applied",
@@ -60,6 +61,8 @@ def validate(record):
         "deadline_text",
         "relative_hours",
         "deadline_confirmed",
+        "application_date",
+        "application_date_evidence",
     }
     if set(record) - allowed:
         raise ValueError("Unknown message fields; use the documented schema")
@@ -70,6 +73,14 @@ def validate(record):
     if result["status"] not in STATUSES:
         raise ValueError("Unsupported application status")
     result["received_at"] = timestamp(record.get("received_at")).isoformat()
+    if record.get("application_date") is not None:
+        applied = text(record, "application_date", maximum=10)
+        if date.fromisoformat(applied).isoformat() != applied:
+            raise ValueError("application_date must be YYYY-MM-DD")
+        result["application_date"] = applied
+        result["application_date_evidence"] = text(record, "application_date_evidence")
+    elif record.get("application_date_evidence") is not None:
+        raise ValueError("Application date evidence requires an application date")
     source = text(record, "source_url", required=False, maximum=2000)
     if source:
         url = urlsplit(source)
@@ -123,7 +134,17 @@ def connect(path):
         "CREATE TABLE IF NOT EXISTS resolutions "
         "(message_id TEXT PRIMARY KEY, deadline_at TEXT NOT NULL, deadline_text TEXT NOT NULL)"
     )
+    calendar_schema(db)
     return db
+
+
+def calendar_schema(db):
+    db.execute(
+        "CREATE TABLE IF NOT EXISTS calendar_events "
+        "(message_id TEXT PRIMARY KEY, calendar_id TEXT NOT NULL, event_id TEXT NOT NULL, "
+        "event_url TEXT NOT NULL, deadline_at TEXT NOT NULL, recorded_at TEXT NOT NULL, "
+        "time_zone TEXT NOT NULL, reminders_json TEXT NOT NULL)"
+    )
 
 
 def ingest(db, records):
@@ -165,24 +186,84 @@ def briefing(db, now, follow_up_days=7):
         if event["message_id"] in resolutions:
             event["deadline_at"], event["deadline_text"] = resolutions[event["message_id"]]
         groups.setdefault(event["application_key"], []).append(event)
-    applications, actions = [], []
+    calendar = {
+        row[0]: dict(
+            zip(
+                ("calendar_id", "event_id", "event_url", "deadline_at", "recorded_at", "time_zone"),
+                row[1:7],
+            ),
+            reminder_minutes=json.loads(row[7]),
+        )
+        for row in db.execute("SELECT * FROM calendar_events")
+    }
+    applications, actions, assessments = [], [], []
     for key, events in groups.items():
         events.sort(key=lambda e: (timestamp(e["received_at"]), e["message_id"]))
         stages = [e for e in events if e["status"] not in {"note", "follow_up_sent"}]
         latest = stages[-1] if stages else events[-1]
         last_contact = max(timestamp(e["received_at"]) for e in events)
+        dates = sorted({e["application_date"] for e in events if e.get("application_date")})
+        confirmations = [e for e in events if e["status"] == "applied"]
         application = {
             "application_key": key,
             "company": latest["company"],
             "role": latest["role"],
             "status": latest["status"],
             "last_contact_at": last_contact.isoformat(),
+            "application_date": dates[0] if len(dates) == 1 else None,
+            "application_date_conflicts": dates if len(dates) > 1 else [],
+            "application_date_evidence": [
+                {
+                    "message_id": e["message_id"],
+                    "date": e["application_date"],
+                    "evidence": e["application_date_evidence"],
+                    "source_url": e["source_url"],
+                }
+                for e in events
+                if e.get("application_date")
+            ],
+            "first_confirmation_at": confirmations[0]["received_at"] if confirmations else None,
             "evidence": [
                 {k: e[k] for k in ("message_id", "source_url", "evidence", "received_at", "status")}
                 for e in events
             ],
         }
         applications.append(application)
+        for assessment in (e for e in events if e["status"] == "assessment"):
+            due_at = assessment["deadline_at"]
+            saved_event = calendar.get(assessment["message_id"])
+            if assessment["completed"]:
+                state = "completed"
+            elif latest["status"] in CLOSED:
+                state = "application_closed"
+            elif due_at is None:
+                state = "deadline_unconfirmed"
+            elif timestamp(due_at) <= now:
+                state = "past_due_verify"
+            else:
+                state = "pending"
+            reminder = "not_recorded"
+            if saved_event:
+                reminder = "recorded" if saved_event["reminder_minutes"] else "event_only"
+                if due_at != saved_event["deadline_at"]:
+                    reminder = "deadline_changed_review"
+                if state in {"completed", "application_closed"}:
+                    reminder = "review_existing_event"
+            assessments.append(
+                {
+                    "application_key": key,
+                    "company": latest["company"],
+                    "role": latest["role"],
+                    "message_id": assessment["message_id"],
+                    "status": state,
+                    "deadline_at": due_at,
+                    "deadline_text": assessment["deadline_text"],
+                    "evidence": assessment["evidence"],
+                    "source_url": assessment["source_url"],
+                    "calendar_status": reminder,
+                    "calendar_event": saved_event,
+                }
+            )
         if latest["status"] in CLOSED or latest["completed"]:
             continue
         action = None
@@ -228,21 +309,112 @@ def briefing(db, now, follow_up_days=7):
                     "source_url": latest["source_url"],
                 }
             )
+    action_sources = {a["message_id"] for a in actions}
+    for assessment in assessments:
+        if assessment["message_id"] in action_sources or assessment["status"] in {
+            "completed",
+            "application_closed",
+        }:
+            continue
+        state = assessment["status"]
+        if state == "deadline_unconfirmed":
+            priority, kind = 0, "confirm_deadline"
+        elif state == "past_due_verify":
+            priority, kind = 0, "verify_overdue"
+        else:
+            priority = 1 if timestamp(assessment["deadline_at"]) - now <= timedelta(hours=72) else 3
+            kind = "deadline"
+        actions.append(
+            {
+                key: assessment[key]
+                for key in (
+                    "application_key",
+                    "company",
+                    "role",
+                    "message_id",
+                    "source_url",
+                    "deadline_at",
+                    "deadline_text",
+                )
+            }
+            | {
+                "priority": priority,
+                "kind": kind,
+                "instruction": "Review the outstanding assessment",
+            }
+        )
     actions.sort(key=lambda a: (a["priority"], a["deadline_at"] or "9999", a["application_key"]))
     applications.sort(key=lambda a: a["application_key"])
     return {
         "as_of": now.isoformat(),
         "tracked": len(applications),
         "applications": applications,
+        "assessments": sorted(
+            assessments, key=lambda a: (a["deadline_at"] or "9999", a["message_id"])
+        ),
         "actions": actions,
         "top_three": actions[:3],
     }
 
 
+def record_calendar(
+    db, message_id, calendar_id, event_id, event_url, deadline_at, now, time_zone, reminder_minutes
+):
+    """Record an event only after Cubbie verifies its actual Google Calendar creation."""
+    fields = {"calendar_id": calendar_id, "event_id": event_id, "event_url": event_url}
+    fields = {key: text(fields, key, maximum=2000) for key in fields}
+    url = urlsplit(fields["event_url"])
+    if (
+        url.scheme != "https"
+        or url.hostname not in {"calendar.google.com", "www.google.com"}
+        or url.username
+        or url.password
+    ):
+        raise ValueError("Use the verified Google Calendar event URL")
+    due = timestamp(deadline_at).isoformat()
+    ZoneInfo(time_zone)
+    if not isinstance(reminder_minutes, list) or any(
+        type(m) is not int or m < 0 or m > 10080 for m in reminder_minutes
+    ):
+        raise ValueError("Reminder offsets must be integer minutes from zero to one week")
+    reminders = sorted(set(reminder_minutes), reverse=True)
+    # Validate and save against one snapshot, so a concurrent deadline change cannot be missed.
+    with db:
+        db.execute("BEGIN IMMEDIATE")
+        assessment = next(
+            (a for a in briefing(db, now)["assessments"] if a["message_id"] == message_id), None
+        )
+        if (
+            assessment is None
+            or assessment["status"] != "pending"
+            or assessment["deadline_at"] != due
+        ):
+            raise ValueError("Calendar event must match a pending, confirmed future assessment")
+        db.execute(
+            "INSERT INTO calendar_events VALUES (?,?,?,?,?,?,?,?) "
+            "ON CONFLICT(message_id) DO UPDATE SET calendar_id=excluded.calendar_id, "
+            "event_id=excluded.event_id, event_url=excluded.event_url, "
+            "deadline_at=excluded.deadline_at, recorded_at=excluded.recorded_at, "
+            "time_zone=excluded.time_zone, reminders_json=excluded.reminders_json",
+            (
+                message_id,
+                fields["calendar_id"],
+                fields["event_id"],
+                fields["event_url"],
+                due,
+                now.isoformat(),
+                time_zone,
+                json.dumps(reminders),
+            ),
+        )
+    return {"recorded": message_id, "event_url": fields["event_url"]}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "command", choices=["scan", "brief", "complete", "resolve", "export", "delete"]
+        "command",
+        choices=["scan", "brief", "complete", "resolve", "calendar-record", "export", "delete"],
     )
     parser.add_argument("--input", type=Path)
     parser.add_argument("--now", required=True, help="Student current ISO timestamp with offset")
@@ -250,6 +422,11 @@ def main():
     parser.add_argument("--message-id")
     parser.add_argument("--deadline-at")
     parser.add_argument("--deadline-text")
+    parser.add_argument("--calendar-id")
+    parser.add_argument("--event-id")
+    parser.add_argument("--event-url")
+    parser.add_argument("--time-zone")
+    parser.add_argument("--reminder-minutes", type=int, nargs="*", default=[])
     parser.add_argument(
         "--sample", action="store_true", help="In-memory demo; never reads saved state"
     )
@@ -272,6 +449,7 @@ def main():
                 "CREATE TABLE resolutions (message_id TEXT PRIMARY KEY, "
                 "deadline_at TEXT NOT NULL, deadline_text TEXT NOT NULL)"
             )
+            calendar_schema(db)
             fixture = Path(__file__).resolve().parents[1] / "assets/sample-messages.json"
             ingest(db, json.loads(fixture.read_text())["messages"])
         else:
@@ -302,6 +480,18 @@ def main():
                     (args.message_id, due, quote),
                 )
             output = {"resolved": args.message_id, "deadline_at": due}
+        elif args.command == "calendar-record":
+            output = record_calendar(
+                db,
+                args.message_id,
+                args.calendar_id,
+                args.event_id,
+                args.event_url,
+                args.deadline_at,
+                now,
+                args.time_zone,
+                args.reminder_minutes,
+            )
         elif args.command == "complete":
             if not args.message_id:
                 raise ValueError("complete needs --message-id after student confirmation")
@@ -317,6 +507,7 @@ def main():
                 raise ValueError("Show the student what will be deleted and obtain yes first")
             with db:
                 db.execute("PRAGMA secure_delete=ON")
+                db.execute("DELETE FROM calendar_events")
                 db.execute("DELETE FROM resolutions")
                 db.execute("DELETE FROM messages")
             db.execute("VACUUM")
