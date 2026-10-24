@@ -1,6 +1,6 @@
 ---
 name: canvas-grader-brief
-description: Reports Canvas assignments, deadlines, and available submission counts for courses where the user is a TA, grader, or IA. Use for requests such as "what needs grading", "how many students submitted", "TA course overview", or "assignment deadlines for the courses I grade". This Skill reports workload; it does not evaluate student work or change grades.
+description: Reads Canvas To Do tasks, assignment deadlines, and available grading counts for a TA, grader, or IA. Use for "read my Canvas to-do", "what needs grading", "what is due November 1", "how many students submitted", or a staff course overview. Separate personal submission tasks from staff grading work and distinguish student due dates from grading deadlines. This Skill reports workload; it does not evaluate work or change grades.
 ---
 
 # Canvas Grader Brief
@@ -36,6 +36,26 @@ Report course, assignment, deadline, and number of students who submitted when t
 5. Preserve the source's labels when only "graded", "ungraded", "not submitted", or "needs grading" counts are available. For example, report "Needs grading: 12; total students submitted unavailable" rather than substituting 12 for the total submitted. Count a student once if working from complete submission records with an actual submitted state or submission timestamp.
 6. Label group counts as groups, not students. Label section-only totals as that section; do not extrapolate them to the course. For external-tool, paper, or no-submission assignments, report only what Canvas actually tracks. An inaccessible count is "Unavailable", never zero. An explicit, verified zero is zero.
 7. Include a denominator only if a matching eligible-student total is available for the same assignment and scope. Do not use a general course roster total as a denominator for an assignment with restricted visibility. Exclude student names, identifiers, grades, and submission contents from this aggregate brief.
+
+## Canvas To Do and deadline cross-check
+
+1. For "To Do", "what needs grading", or a request to explain workload and deadlines, read the current account's Canvas To Do items if the connected Canvas ability exposes them. Do not claim this ability exists until it returns real items. Read task type, course, assignment or quiz title, link, any explicit due date, and any source-labeled needs-grading count. Follow available pagination.
+2. If the connection does not expose To Do, offer the browser route described above: open the verified school's Canvas Dashboard and inspect To Do and the relevant course's To Do list. Expand available items and preserve the visible task labels. For ASU the user-provided starting site is https://canvas.asu.edu. Sign in securely through the user's own account if needed. If neither route works, ask for a screenshot or pasted To Do list and label the report as a supplied snapshot. Do not infer an empty list from an unsupported tool or failed page load.
+3. Separate "grading" tasks from "submitting" tasks. The same user may be a TA in one course and a student in another. For an explicit TA/grader request, focus on confirmed staff courses, while noting that personal submission tasks were left out. For a general To Do request, show small separate lists for grading work, personal submissions, and other tasks. Do not assume a task is grading work based on its title alone. Keep unfamiliar task types labeled as Canvas presents them.
+4. Cross-check each relevant assignment's details for its deadline and course/section variants. A timestamp displayed beside a grading task can be the students' submission deadline, not the TA's grading deadline. Label it "Student submissions due". Show "Grading due" only if an explicit staff deadline is present in a source the account can read, such as authorized course instructions or a user-provided deadline. Otherwise say "Grading deadline not specified". Distinguish an explicitly unset due date from an unavailable date, and show source conflicts rather than choosing one silently.
+5. For date-specific questions, resolve the local calendar day and time zone before filtering: "November 1, 2026 in America/Phoenix" spans that local day's midnight to the next midnight. Convert source timestamps before filtering; do not match the UTC date text. If the year is unclear, confirm it. Include a task if a relevant section deadline falls on that day, and identify the section. Do not count a task's creation, notification, or availability date as its deadline.
+6. A To Do list is a workload signal, not a complete assignment calendar: Canvas limits returned items, and hidden/dismissed tasks or future work may be absent. Even after pagination, say "Shown in your To Do" rather than claiming all coursework was checked. For "all deadlines" or a specific due-date request, also read the full relevant assignment list through the requested range and combine by course and assignment identity. Merge duplicate references to an assignment without adding its needs-grading count twice; keep genuinely distinct quiz/discussion checkpoints separate.
+7. Show a needs-grading count only under that label. Missing counts are unavailable, not zero. Do not treat the number of To Do entries as the number of student submissions. Canvas may expose additional grading count categories depending on enabled institution features; preserve their labels and scope rather than estimating missing categories. Use the earlier count rules for exact submitted-student totals.
+8. Keep old grading tasks visible when the user asks for a backlog, even if the student due date passed. Separate dated upcoming work, older pending grading, and tasks with no verified deadline. Offer to order undated grading work by the user's priority; do not call it overdue without a grading deadline. Read only: never dismiss, ignore, complete, or hide To Do items, change a planner item, or submit/grade work in this workflow.
+
+Example reply format using fictional data:
+
+CS 201 — Lab 4
+To Do: Grade 12 submissions
+Student submissions due: Nov 1, 2026, 11:59 pm MST
+Grading deadline: Not specified
+
+Follow this format only when the fields are verified. Include a checked-at time and label browser, connected Canvas, or supplied snapshot as the source.
 
 ## Replies
 
