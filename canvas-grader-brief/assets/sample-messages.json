@@ -1,0 +1,5 @@
+{"messages":[
+{"message_id":"demo-1","application_key":"exampleco-intern-1","company":"ExampleCo","role":"Software Intern","status":"assessment","received_at":"2026-10-23T10:00:00-07:00","evidence":"Complete within 72 hours of this email.","deadline_text":"within 72 hours of this email","relative_hours":72,"deadline_confirmed":true},
+{"message_id":"demo-2","application_key":"samplelabs-data-2","company":"Sample Labs","role":"Data Intern","status":"interview","received_at":"2026-10-24T09:00:00-07:00","evidence":"Please reply with your availability for an interview."},
+{"message_id":"demo-3","application_key":"fictional-analyst-3","company":"Fictional Systems","role":"Analyst","status":"applied","received_at":"2026-10-10T09:00:00-07:00","evidence":"We received your application."}
+]}
