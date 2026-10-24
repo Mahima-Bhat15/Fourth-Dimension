@@ -8,6 +8,12 @@ Ask: "Read my Canvas To Do for the courses I TA. Explain the deadlines and what 
 
 The Skill separates grading work from personal submission tasks, labels student submission deadlines separately from explicit grading deadlines, and cross-checks assignments for a requested date. Canvas To Do is a limited list, so it does not replace the full assignment calendar. It never dismisses tasks. Connected To Do access is unverified; the Skill offers a secure browser route or a supplied snapshot when necessary.
 
+## Large attachments and partial sync
+
+For deadline and grading briefs, the Skill prioritizes assignment metadata and avoids bulk attachment processing. If a requested file exceeds the observed 52,428,800-byte (50 MiB) upload limit, it skips that file in its own workflow, reports the omission, and continues accessible assignment and To Do data. Unknown sizes are reported rather than guessed. It never deletes or modifies Canvas files.
+
+This does **not** change Cubbie's automatic sync service, prevent that service from retrying files, or clear its partial-sync status. The observed limit comes from the user's service error; current service responses take precedence. Live behavior is still untested.
+
 ## Status
 
 First draft. Live staff access and submission statistics have **not** been tested on Cubbie. The installed kit documents courses, assignments, and deadlines, but does not guarantee staff statistics through its Canvas connection. The Skill tries that connection first and offers an authenticated Canvas browser workflow if necessary. It reports unavailable counts honestly.
