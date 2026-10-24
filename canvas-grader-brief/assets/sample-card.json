@@ -1,0 +1,29 @@
+{
+  "source": "FICTIONAL DEMO - not live Canvas",
+  "checked_at": "2026-10-24T16:46:00-07:00",
+  "time_zone": "America/Phoenix",
+  "range_label": "Upcoming assignments · Arizona time",
+  "coverage_note": "Demo data only. Your Canvas records are still unverified.",
+  "assignments": [
+    {
+      "course": "CSE 579 · Demo",
+      "name": "Assignment 2",
+      "due_at": "2026-11-02T06:59:00Z",
+      "points_possible": 100,
+      "assignment_group_weight_pct": 10,
+      "students_submitted": 38,
+      "eligible_students": 45,
+      "needs_grading": 12
+    },
+    {
+      "course": "CSE 579 · Demo",
+      "name": "Assignment 3",
+      "due_at": "2026-11-09T06:59:00Z",
+      "points_possible": 100,
+      "assignment_group_weight_pct": 15,
+      "students_submitted": null,
+      "eligible_students": null,
+      "needs_grading": null
+    }
+  ]
+}

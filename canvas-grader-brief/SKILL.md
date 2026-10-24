@@ -1,11 +1,15 @@
 ---
 name: canvas-grader-brief
-description: Reads Canvas To Do tasks, assignment deadlines, and available grading counts for a TA, grader, or IA. Use for "read my Canvas to-do", "what needs grading", "what is due November 1", "how many students submitted", or a staff course overview. Separate personal submission tasks from staff grading work and distinguish student due dates from grading deadlines. This Skill reports workload; it does not evaluate work or change grades.
+description: Creates visual Canvas assignment cards with deadlines, points possible, and verified grading counts for a TA, grader, or IA. Use for "show my grading card", "upcoming assignment chart", "read my Canvas to-do", "what needs grading", "what is due November 1", or "how many students submitted". Separate personal submissions from staff work and student due dates from grading deadlines. This Skill reports workload; it does not evaluate work or change grades.
 ---
 
 # Canvas Grader Brief
 
-Help a student who also works as a TA, grader, or instructional assistant check their grading workload from a text conversation. Use Cubbie's Canvas and browser abilities in plain language. No scripts, packages, keys, or team backend are required.
+Help a student who also works as a TA, grader, or instructional assistant check their grading workload from a text conversation. Use Cubbie's Canvas and browser abilities to fetch real data, then render it as a PNG card with the bundled Python script. The renderer needs Pillow; it has no network access, credentials, or backend.
+
+## Setup for visual cards
+
+Before generating Canvas image cards, read references/card-format.md for the pinned Pillow installation, sample command, data schema, and rendering/delivery rules. No credentials are needed by the renderer.
 
 ## Scope
 
@@ -69,18 +73,15 @@ Grading deadline: Not specified
 
 Follow this format only when the fields are verified. Include a checked-at time and label browser, connected Canvas, or supplied snapshot as the source.
 
+## Visual cards
+
+For every Canvas visual brief, follow references/card-format.md. Default to a generated PNG attachment with a short caption, verified points and deadlines, and progress bars only with valid matching counts. Respect text-only requests and report delivery failures honestly. Never use sample data for a real lookup.
+
 ## Replies
 
-Use short, plain text lines, one assignment per small block, with links on their own lines. Lead with the requested answer. Sort a deadline brief by earliest deadline; put assignments without a due date at the end. For a grading brief, lead with verified pending grading work. For more than five assignments, text a short summary and offer a document or sheet with the rest. Include when the information was checked and whether it came from live Canvas or an export.
+Send the visual card with a short, plain-text caption summarizing the next deadline and any access gap. Put assignment links on their own lines outside the image. When an image cannot be delivered or the user requests text, use the fallback format below. Sort a deadline brief by earliest deadline; put assignments without a due date at the end. For a grading brief, lead with verified pending grading work. For a long list, send a short summary and offer a document or sheet. Include when the information was checked and whether it came from live Canvas or a supplied snapshot.
 
-Example format only; the following numbers are fictional:
-
-CS 201 — Lab 4
-Due: Nov 6, 11:59 pm MST
-Students submitted: 38 of 45
-Needs grading: 12
-
-Use this format only for fields actually verified. If no count is accessible, keep the assignment and deadline and say "Submission count unavailable with this connection."
+Use only verified fields in the card or text fallback. If no count is accessible, keep the assignment and deadline and say "Submission count unavailable with this connection."
 
 ## Follow-ups and failures
 
@@ -89,7 +90,6 @@ Use this format only for fields actually verified. If no count is accessible, ke
 - Nothing matches: name the checked courses and range, and offer a wider range. Distinguish an empty result from a failed lookup.
 - Session expired: ask the user to reconnect or sign in securely, then retry the requested read.
 - User requests recurring briefs: propose the course scope, fields, local time, and frequency. Create the scheduled check-in only after they agree. Each scheduled instruction names this Skill and those settings, fetches fresh data, and reports access failures without inventing counts.
-
 
 ---
 
