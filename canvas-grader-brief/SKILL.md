@@ -101,24 +101,23 @@ requests such as “use Cubbridge,” “find my applications,” “find alumni
 Google Calendar.” The **Canvas Grader Brief section above is separate and unchanged**.
 For a mixed request, apply each workflow only to its own part and permissions.
 
-**Default Cubbridge output:** One concise final text message with only non-rejected
-applications, their company / role / actual application date, verified individual LinkedIn
-links and short notes, and pending assessments with Google Calendar add-event links only
-when the deadline is verified. No workbook unless explicitly requested.
+**Default Cubbridge output:** A single short iMessage career briefing, not a full
+application tracker. Cubbridge surfaces what needs attention; Cubboard is the place for
+complete application histories, LinkedIn contact lists, message drafts, assessment and
+interview details. Use the **Required response format** section below to match the user's
+intent. An explicitly requested Excel export remains separate.
 
-For a completed Cubbridge career request, send ONE final text message, never a
-sequence of progress updates or contact-by-contact replies. Show ONLY applications for
-which no rejection has been verified for that same company/role/requisition. For each,
-show company + role, actual date applied, verified LinkedIn profile links with brief
-ready-to-send connection notes, and pending assessments with an Add to Google Calendar
-link if the deadline is verified. Use short, consistent application blocks like the
-Canvas Grader Brief's one-assignment-per-block format; no narrative, explanations,
-photos, social-preview cards, generic company pages, counts, or dashboard summaries.
-Do not render contact photos or request rich previews. A messaging client may still
-auto-unfurl URLs outside the Skill's control; prefer compact named text links where
-supported. Never stream partial answers: perform research and filtering first, then
-compose a single final reply. An explicit Excel request is a separate workflow.
-Canvas requests remain governed by the unchanged Canvas Grader Brief section above.
+For every Cubbridge reply, check and reconcile the authorized evidence first, then
+send ONE final, plain-text response. Do not send contact-by-contact messages, research
+narration, images, company/social-preview cards, or multiple summaries. Display only
+applications without a verified rejection for that exact company/role/requisition;
+unknown status is not proof of an active application. For a broad update, show short
+counts and urgent actions. For a specific company's LinkedIn connections, show TWO or
+THREE relevant verified individual contacts **when available**, with named links and a
+short personalized note for each; never fill slots with invented people. Include a real
+Cubboard link only if its actual user-specific URL is available and verified. Prefer
+compact named links to reduce previews, although client auto-unfurling is beyond the
+Skill's control. Canvas requests remain governed by the unchanged section above.
 
 Use Cubbie's connected Gmail, web, document creation, Contacts and Google Calendar abilities
 in plain words. Scripts cannot call those abilities. This Skill needs no separate server,
@@ -208,34 +207,40 @@ Prioritize actual recruiters already corresponding with the student, followed by
 - Current recruiters or talent-acquisition staff at that company. Do not claim someone
   recruits for this exact role unless that responsibility is evidenced.
 
-Research up to three verified alumni and two verified recruiters per company, but show
-no more than the best TWO relevant individuals per application in the default message
-(unless the student asks for more); a person can satisfy both categories.
-Fewer verified results are better than invented ones.
+Research enough candidates to return the best TWO or THREE verified individuals when
+the student specifically requests LinkedIn contacts for a company. A person can satisfy
+both alumni and recruiter categories. Rank confirmed first-degree connections and prior
+recruiter correspondents highly, followed by verified alumni and relevant recruiters;
+use role relevance and previous interaction as tie-breakers. Do not label anyone a
+first-degree connection unless authorized connection data confirms it. If only one or
+zero candidates are verifiable, show only those and say no additional verified matches
+were found; never pad the answer with generic company pages or invented people. Broad
+career updates report only the number of verified networking matches, not names/notes.
 Use public profiles, employer staff pages or university alumni pages as evidence. A search
 snippet alone is insufficient when employment or school affiliation is unclear. Record the
 actual LinkedIn URL only when found; never construct or guess a profile slug or email.
 Do not claim a LinkedIn API connection, scrape private profiles, bypass access restrictions
 or describe a public person as already connected to the student.
 
-If a profile is inaccessible or a match cannot be verified, use the short default
-line “LinkedIn: No verified contacts found” for that application. Do not make
-unverified names or generic company pages appear as connection recommendations.
-Keep research gaps internally rather than discussing them in the standard reply.
-Reuse verified company research across applications while keeping role-specific
-messages separate. For large inventories, process work in bounded batches and
-report incomplete coverage clearly rather than silently skipping companies.
+If an individual profile is inaccessible or cannot be verified, do not recommend it.
+For a company-specific contact request with no matches, say “No verified LinkedIn
+contacts found for <Company>.” Keep detailed research gaps in Cubboard or internal
+records; mention a partial search in one short line if it affects the answer. Reuse
+verified company research across applications while keeping role-specific messages
+separate. For large inventories, process bounded batches and do not imply incomplete
+coverage is comprehensive.
 
 ## 4. Draft a message for each verified LinkedIn contact
 
 For each verified LinkedIn profile, generate exactly one short personalized connection
-note (aim at 200 characters or fewer). In the default response, show only the
-person's name as a clickable link to their verified LinkedIn profile, then one
-short note on the next line. Do not show images, job titles, biographies, profile
-summaries or extra commentary. Ground it in the actual company, applied role,
-verified contact details and the student's real background. Alumni notes can
-mention a verified shared school; recruiter notes can mention the actual application.
-Do not invent prior familiarity, referrals, qualifications or an application review.
+note (aim at 200 characters or fewer). In a company-specific LinkedIn request, show
+two or three best verified contacts when possible: the person's name as a clickable
+link to their real individual profile, a short relationship label only when verified
+(e.g., Connected, Alumnus, Recruiter), then their one-line note. Do not show photos,
+biographies, long role descriptions, or an entire company's contact list. Do not include
+names/notes in a general career briefing. Ground every note in the company, applied role,
+verified contact details and student's real background. Mention a shared school only if
+verified; do not invent familiarity, referrals, qualifications or application reviews.
 
 Messages are drafts for the student to review and send manually on LinkedIn. No connection
 requests or messages are sent as part of report generation. Do not store any draft as sent.
@@ -249,11 +254,14 @@ send result before retrying. Record only confirmed sent email follow-ups as `fol
 For every assessment, retain the company, role, invitation/source ID, assessment description,
 status, source link, exact deadline text and confirmed deadline internally. Use the
 engine's separate `assessments` list; absence means “No assessment found in checked evidence”,
-not proof that no assessment exists. Show only pending assessments associated
-with the displayed non-rejected applications in the default reply. Include a Calendar add-event link only for a
-confirmed future deadline. For ambiguous pending deadlines show "Assessment: <name> —
-Deadline not verified" with no Calendar link. Omit completed assessments from the
-concise default view; do not present past-due dates as upcoming events.
+not proof that no assessment exists. Show only pending assessments for non-rejected applications in a general career
+briefing or when the student requests assessments. For the general briefing, surface
+at most the two most urgent confirmed assessment/interview actions; put full details in
+Cubboard. For an assessment-specific request, show each relevant upcoming deadline in
+one small block, including an Add to Google Calendar link only for confirmed future
+deadlines. For an ambiguous pending deadline, say "Deadline needs confirmation" with
+no link. Omit completed assessments from the concise view and never label a past-due
+deadline as upcoming.
 
 - Only calculate a deadline when date, time and zone are unambiguous or confirmed by the
   student. “Within 72 hours of this email” may use `relative_hours: 72` with verified receipt
@@ -339,10 +347,12 @@ it with a one-line confirmation; do not repeat unrelated summary fields.
 
 ## Recurring updates, priorities and privacy
 
-A career update refreshes the approved scope and returns ONE compact message containing
-only non-rejected applications, LinkedIn names/links with short notes, and pending
-assessments with add-event links. Do not surface rejected applications, top-three-action
-summaries, stage analyses, or application counts in the default reply.
+A career update refreshes the approved scope and returns ONE short career briefing:
+non-rejected tracked-application count, confirmed upcoming assessment and interview
+counts, at most two urgent actions, and a count of verified networking matches if
+available. Do not list every application or contact, and do not include rejected
+applications in displayed counts or recommendations. Counts are grounded in the checked
+scope, not inferred from partial data; say coverage is partial when applicable.
 Use `--follow-up-days <days>` for internal prioritization if needed (default 7). A
 saved-ledger read is not a fresh inbox scan.
 Offer recurring report/check-in delivery only with consent to its time, zone and frequency.
@@ -364,88 +374,130 @@ Sample mode leaves saved data untouched. For a demonstration response or an expl
 requested Excel export, label examples fictional, leave real contacts unresearched, and
 create no actual Calendar events. See `references/testing.md` for live acceptance.
 
-## Required response format — one message, concise application blocks
+## Required response format — one clear iMessage response
 
-This section overrides any earlier instruction to produce multiple updates, an Excel
-attachment, detailed networking explanations, or calendar-status summaries. For normal
-Cubbridge application results, send EXACTLY ONE compact text message after all searches,
-status reconciliation and contact checks finish. Do not send "I’ll recheck", "Here’s what
-I found so far", intermediate contact details, photos, rich preview cards, screenshots,
-extra headings, emails, descriptions, generic company links, status histories or source
-analysis. No introductory paragraph, conclusion or follow-up question on a completed
-report. Do not print the name or email address of the Gmail account scanned.
+Treat Cubbridge like the Canvas Grader Brief: lead with the requested answer, use short
+plain-text lines and small, consistently labeled blocks, and include only fields backed
+by checked evidence. **Always respond to the user's specific intent.** Finish research,
+status reconciliation and filtering before composing ONE final message. No progress
+messages, repeated explanations, giant contact cards, pictures, long links, raw search
+logs, source-analysis paragraphs or copied email contents. Use compact named links when
+supported. Do not mention the Gmail account address in normal results.
 
-Include ONLY applications WITHOUT a verified rejection for that specific company and
-role/requisition. Apply this filter before forming the reply, including against later
-rejection emails within the checked evidence. Do not list rejected applications even
-as examples, notes, or contact suggestions. An unknown status is NOT proof of an active
-application; use only evidence and do not claim all applications are active.
+**Global filter:** Exclude a confirmed rejection for that specific company + role +
+requisition from every active/non-rejected listing, count, networking suggestion and
+urgent-action recommendation. Do not suppress a different role at the same company.
+Unknown status means "tracked; status unverified", never "actively interviewing".
+Deduplicate first. Use real dates and explicit local time zones. If a requested fact
+cannot be verified, label it briefly rather than guessing. Keep any detailed application
+history, full networking lists, drafts, email/source evidence and scheduling details in
+Cubboard when a connected dashboard is actually available.
 
-For each remaining distinct application, use this compact layout (one blank line
-between applications, same field order for every one):
+### A. General career update (the default)
 
-<Company> — <Role applied>
-Applied: <actual submission date, or "Not verified">
-LinkedIn:
-- <Contact name as a named link to their VERIFIED individual LinkedIn profile>
-  Note: <one short ready-to-send connection note, <= 200 characters>
-- <Optional second verified contact name as a link>
-  Note: <short connection note>
-Assessment: <assessment name> — <confirmed local date, time and zone> —
-  <named "Add to Google Calendar" link to prefilled event>
+For "career update", "what should I do today?", "check my applications", or an
+unspecified Cubbridge briefing, use at most SIX TO EIGHT short lines, one message:
 
-Display at most TWO verified people for each application in the default reply,
-prioritizing actual first-degree contacts when confirmed, then verified alumni or
-recruiters. The link should be attached to the person's name if text links are supported;
-otherwise use `Name — actual LinkedIn URL` with no image/embed. Never use a LinkedIn
-company page as a contact link. Never label an unverified person as already connected.
-For no verified profile, replace the LinkedIn subsection with exactly:
-`LinkedIn: No verified contacts found`.
+```text
+Cubbridge — Career Update
+12 tracked applications (not rejected) · 2 assessments · 1 interview
 
-Show only pending assessments tied to that application. If several pending assessments
-exist, put each on its own "Assessment:" line. Give "Add to Google Calendar" ONLY
-when a real future deadline with correct time zone is verified. For uncertain pending
-assessments show `Assessment: <name> — Deadline not verified` without a link. If no
-assessment appears in checked evidence, use `Assessment: None found in checked messages`.
-Never claim a Calendar event was added by merely producing a link.
+Upcoming:
+Amazon — Assessment: Oct 28, 5:00 PM MST
+Adobe — Interview: Oct 30, 11:00 AM MST
+Networking: 3 verified matches for tracked applications
+Cubboard: [Open dashboard]
+```
 
-Sort displayed applications by nearest verified upcoming assessment deadline, then
-most recent verified application date (unknown dates last). Default to the FIVE most
-relevant non-rejected applications when the approved scan yields more than five; if
-omitting results, add only one short final line `More applications available — ask for
-all.` Never silently claim that the shortened list is exhaustive. When the student
-explicitly asks for ALL, include every eligible application in one message if the
-messaging channel permits, or ask for a narrower range rather than silently splitting
-into multiple messages. Do not add counts or a long explanation.
+This is fictional formatting only. Replace all numbers, companies, dates and links with
+verified values. Count only pending assessments with confirmed upcoming deadlines as
+"assessments" and confirmed upcoming interviews as "interviews". If interview invites
+are awaiting a reply, surface the action without calling them scheduled interviews.
+Include at most the two most urgent verified actions, sorted by due time; other details
+belong in Cubboard. Skip the networking count when not checked. Include the dashboard
+line ONLY when an actual user-specific Cubboard URL is known and verified; otherwise
+omit that line without inventing a URL. If no urgent actions are verified, use
+"Upcoming: No confirmed deadlines in the checked scope." Do not turn incomplete access
+into a false zero; use a brief "Coverage: partial" line when necessary. Exclude images,
+contact names, outreach drafts, full application lists and long explanations.
 
-### Example — fictional data, not a real report
+### B. LinkedIn connections for a named company
 
-ExampleCo — Software Engineering Intern
-Applied: October 12, 2026
-LinkedIn:
-- Alex Example — [LinkedIn profile link]
-  Note: Hi Alex, I applied for ExampleCo's SWE internship and would love to hear about your experience. Open to connecting?
-Assessment: Coding test — October 28, 2026, 10:00 AM MST — [Add to Google Calendar]
+For "Who should I connect with at Microsoft?", "find recruiters at Adobe", or any
+specific-company networking query, show TWO OR THREE best VERIFIED individual LinkedIn
+profiles **when available**. Do not give only one top match if two or more are verified.
+Rank actual first-degree contacts first when evidenced, then relevant alumni/recruiters.
+Each person gets one named LinkedIn link and a single short ready-to-send connection
+note (aim at 200 characters or fewer). One company only; do not include an inbox
+summary or unrelated application information.
 
-Acme Labs — Data Analyst Intern
-Applied: Not verified
-LinkedIn: No verified contacts found
-Assessment: None found in checked messages
+```text
+Microsoft — Software Engineering Intern
+LinkedIn connections:
+1. [Alex Example — LinkedIn] (Connected)
+   Note: Hi Alex, I recently applied for Microsoft's SWE internship. I'd love to learn about your experience. Open to connecting?
+2. [Taylor Example — LinkedIn] (Alumnus)
+   Note: Hi Taylor, I recently applied to Microsoft and saw we attended the same university. I'd love to connect!
+3. [Sam Example — LinkedIn] (Recruiter)
+   Note: Hi Sam, I applied for a Microsoft SWE internship and would appreciate connecting. Thanks!
+```
 
-In a real report, replace the bracketed link labels with ACTUAL verified hyperlinks.
-Never invent people, LinkedIn addresses, deadlines or calendar URLs. Do not label a
-fictional example as an actual discovery.
+The names/links and shared relationships above are entirely fictional. In live results,
+link the name to the person's VERIFIED individual profile, not a company page or guessed
+URL. Show at most three, no more than one short note each. If only one verified person is
+found, show that one and say "No other verified matches found." If none are found, say
+"No verified LinkedIn contacts found for <Company>." If multiple roles exist at the
+company, use the specifically requested role or ask which role if personalization depends
+on it. Do not claim a public profile is an existing LinkedIn connection without proof.
 
-### Failures and final check
+### C. Assessments or interviews when explicitly requested
 
-If Gmail is disconnected or results are incomplete, return ONE concise factual access
-message rather than inventing details or streaming partial results. If no eligible
-application is found, say only: `No applications without a confirmed rejection were
-found in the checked messages.` Do not claim there are no applications outside scope.
+Only return requested upcoming dates and essential actions. Use one compact block per
+assessment/interview, following the Canvas Grader Brief's one-assignment-per-block style:
 
-Before sending, confirm: the response is exactly one message; every listed application
-is deduplicated and has no verified rejection; each block contains only company, role,
-application date, named profile links with brief notes, and assessment lines with
-appropriate Google Calendar links; all names and timestamps are backed by actual
-sources; no contact pictures or company-card fallbacks appear; no extra narrative is
-included; and the Canvas workflow above has not been touched.
+```text
+Amazon — Software Development Engineer Intern
+Assessment: Coding test
+Due: October 28, 2026, 5:00 PM MST
+[Add to Google Calendar]
+```
+
+Create the named Calendar link only from a verified future date, time and zone, using
+the safe prefilled-event procedure in Section 5. The link is for manual review and save,
+not proof of a created event. If the deadline is uncertain, say
+"Due: Needs confirmation" and omit the link. For interviews, distinguish a scheduled
+interview from an invitation awaiting a response. Do not send every contact or
+application along with an assessment-only or interview-only request.
+
+### D. Application list when explicitly requested
+
+If the student specifically asks "show my applications" or "where did I apply?" rather
+than a general progress briefing, give only company, role and verified application date
+for the latest FIVE non-rejected applications; use "Date applied: Not verified" if
+necessary. One job per line, or a short block if easier to read. End with
+"More in Cubboard" only when a verified dashboard link can accompany it; otherwise say
+"Ask for more applications." Respect an explicit company/date filter. A request for all
+applications may be directed to the full connected Cubboard view or an explicitly requested
+Excel export; do not flood iMessage with an unbounded response.
+
+### E. Explicit outreach or other action requests
+
+If the student asks for a specific LinkedIn note, cold email or Calendar creation,
+show only that requested draft or required approval details. Gmail sends and Calendar
+writes still require the approvals and verification defined above; a chat link never
+means the event was created. If Excel is explicitly requested, follow Section 6 instead.
+
+### Failures and final checks
+
+When Gmail, networking data or Cubboard is disconnected, explain that specific blocker in
+ONE short message with the next recovery step; do not invent data, URLs, contacts or
+counts. Do not claim an empty inbox from a failed query. When there are no eligible
+applications within a completed search, say "No non-rejected applications found in the
+checked range." Be explicit about partial coverage when it affects a decision.
+
+Before sending, verify: exactly one final message; the response type matches the user's
+question; rejected applications are filtered by exact role; dates and counts are
+source-backed; general briefings have at most two urgent actions; company-specific
+networking answers show up to three actual verified people and one note each; Google
+Calendar links use confirmed future deadlines; dashboard links are real; and the
+Canvas Grader Brief section above remains unchanged.
