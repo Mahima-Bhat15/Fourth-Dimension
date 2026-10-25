@@ -1,4 +1,6 @@
-# Canvas Grader Brief
+# Cubboard
+
+Formerly installed as `canvas-grader-brief`. Install from the new folder link below; after Cubboard installs successfully, remove the older Skill to avoid duplicate triggers. Existing private configuration and renderer environment paths retain their original names for compatibility. The card design and workflows are unchanged.
 
 A Cubbie Skill for students who also serve as Canvas TAs, graders, or instructional assistants. Ask for Canvas To Do tasks, course assignments, deadlines, submission counts, or pending grading work.
 
@@ -48,7 +50,7 @@ No API keys are needed for the renderer; Pillow is installed in a private virtua
 
 Text Cubbie this Skill folder link, approve installation, then send a new message:
 
-https://github.com/Mahima-Bhat15/Fourth-Dimension/tree/main/canvas-grader-brief
+https://github.com/Mahima-Bhat15/Fourth-Dimension/tree/main/cubboard
 
 > For the courses where I'm a TA, show assignments due this week, deadlines, and how many students submitted.
 

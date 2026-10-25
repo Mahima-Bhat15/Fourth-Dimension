@@ -1,5 +1,5 @@
 ---
-name: canvas-grader-brief
+name: cubboard
 description: Creates visual Canvas assignment cards and Google Calendar reminders for a TA, grader, or IA. Use for "show my grading card", "upcoming assignment chart", "read my Canvas to-do", "what needs grading", "what is due November 1", "how many students submitted", or "remind me to grade this assignment". Separate personal submissions from staff work and student due dates from grading deadlines. This Skill reports workload; it does not evaluate work or change grades.
 ---
 
