@@ -1,6 +1,13 @@
 ---
 name: cubboard
-description: Creates visual Canvas assignment cards and Google Calendar reminders for a TA, grader, or IA. Use for "show my grading card", "upcoming assignment chart", "read my Canvas to-do", "what needs grading", "what is due November 1", "how many students submitted", or "remind me to grade this assignment". Separate personal submissions from staff work and student due dates from grading deadlines. This Skill reports workload; it does not evaluate work or change grades.
+description: >-
+  Tracks a student's job applications from Gmail (status, assessments, interviews, LinkedIn contacts,
+  Excel tracker synced to Cubboard) and builds Canvas grading cards for TAs, graders and IAs. Use for
+  any job question, even casual: "my applications", "job applications", "summary of my jobs",
+  "application status", "any interviews?", "assessment deadlines", "who can I connect with at Adobe",
+  "Cubbridge". Also use for Canvas staff work: "show my grading card", "what needs grading", "read my
+  Canvas to-do", "what is due November 1", "how many students submitted", "remind me to grade this".
+  Reports only; never grades work or sends outreach without approval.
 ---
 
 # Canvas Grader Brief
@@ -96,11 +103,17 @@ requests such as “use Cubbridge,” “find my applications,” “find alumni
 Google Calendar.” The **Canvas Grader Brief section above is separate and unchanged**.
 For a mixed request, apply each workflow only to its own part and permissions.
 
-**Default Cubbridge output:** A single short iMessage career briefing, not a full
-application tracker. Cubbridge surfaces what needs attention; Cubboard is the place for
-complete application histories, LinkedIn contact lists, message drafts, assessment and
-interview details. Use the **Required response format** section below to match the user's
-intent. An explicitly requested Excel export remains separate.
+**Default Cubbridge output:** A single short iMessage career briefing plus the jobs
+workbook. Cubbridge surfaces what needs attention; Cubboard is the place for complete
+application histories, LinkedIn contact lists, message drafts, assessment and interview
+details. Use the **Required response format** section below to match the user's intent.
+
+**Every answer about job applications** (including the first one) MUST follow
+`references/job-status-and-cubboard.md`: show each listed job's status as Applied, Online
+assessment, Interview stage or Offer; leave rejected and withdrawn jobs out entirely; attach
+`cubboard-jobs-YYYY-MM-DD.xlsx`; and end with `Cubboard: http://127.0.0.1:8787/#student`.
+Never send requests to that address: it only exists on the student's Mac, and Cubboard
+syncs from the workbook delivered in this conversation.
 
 For every Cubbridge reply, check and reconcile the authorized evidence first, then
 compose ONE final, plain-text answer. Never intentionally split the answer into
@@ -113,9 +126,9 @@ of an active application. For a broad update, show short counts and urgent actio
 For a specifically requested company's LinkedIn contacts, show TWO or THREE relevant
 verified individuals **when available**, with named links and one brief personalized
 outreach message each; do not require an application at that company to research it.
-Never invent people. Include a Cubboard link only when its actual user-specific URL is
-available and verified. Prefer compact named links, although client auto-unfurling is
-beyond the Skill's control. Canvas requests remain governed by the unchanged section above.
+Never invent people. The student's Cubboard link is `http://127.0.0.1:8787/#student`;
+include it as the reference file says and never invent other dashboard URLs. Prefer compact
+named links, although client auto-unfurling is beyond the Skill's control. Canvas requests remain governed by the unchanged section above.
 
 Use Cubbie's connected Gmail, web, document creation, Contacts and Google Calendar abilities
 in plain words. Scripts cannot call those abilities. This Skill needs no separate server,
@@ -192,72 +205,16 @@ workbook-conversion service. Calendar entries use the student's approved Google 
 
 ## 3. Research company details and LinkedIn connections
 
-For general career briefings, research companies attached to non-rejected tracked
-applications. For an explicit query such as "Find recruiters at Microsoft" or "Who can
-I connect with at Adobe?", research that named company even if the student has not
-applied there or an older application was rejected. Do not list a rejected role as
-active, imply that the student applied, or recommend follow-ups for a closed application.
-When no current application is verified, personalize outreach using only verified
-company/contact facts and student-provided context; do not invent an application.
-Verify the actual employer and relevant public professional profiles. Use employer
-details as internal verification, NOT as visible output. Never substitute
-a company's generic LinkedIn page, homepage, or public company image for an individual
-verified person's LinkedIn profile.
-
-Find relevant public LinkedIn profiles through Cubbie's web/browser abilities and contacts
-supplied by the student. If useful, ask permission to consult their connected Contacts.
-Prioritize actual recruiters already corresponding with the student, followed by:
-
-- School alumni currently working at that company. Verify both the school affiliation
-  and current employment; do not claim a degree or graduation that the source does not show.
-- Current recruiters or talent-acquisition staff at that company. Do not claim someone
-  recruits for this exact role unless that responsibility is evidenced.
-
-Research enough candidates to return the best TWO or THREE verified individuals when
-the student specifically requests LinkedIn contacts for a company. A person can satisfy
-both alumni and recruiter categories. Rank confirmed first-degree connections and prior
-recruiter correspondents highly, followed by verified alumni and relevant recruiters;
-use role relevance and previous interaction as tie-breakers. Do not label anyone a
-first-degree connection unless authorized connection data confirms it. If only one or
-zero candidates are verifiable, show only those and say no additional verified matches
-were found; never pad the answer with generic company pages or invented people. Broad
-career updates report only the number of verified networking matches, not names/notes.
-Use public profiles, employer staff pages or university alumni pages as evidence. A search
-snippet alone is insufficient when employment or school affiliation is unclear. Record the
-actual LinkedIn URL only when found; never construct or guess a profile slug or email.
-Do not claim a LinkedIn API connection, scrape private profiles, bypass access restrictions
-or describe a public person as already connected to the student.
-
-If an individual profile is inaccessible or cannot be verified, do not recommend it.
-For a company-specific contact request with no matches, say “No verified LinkedIn
-contacts found for <Company>.” Keep detailed research gaps in Cubboard or internal
-records; mention a partial search in one short line if it affects the answer. Reuse
-verified company research across applications while keeping role-specific messages
-separate. For large inventories, process bounded batches and do not imply incomplete
-coverage is comprehensive.
+Before researching companies or LinkedIn contacts (general briefings or a named-company
+request), read `references/linkedin-research.md` and follow it exactly: verified individual
+profiles only, alumni/recruiter ranking, two or three people when available, never invented.
 
 ## 4. Draft a message for each verified LinkedIn contact
 
-For each verified LinkedIn profile, generate exactly one short personalized message
-(aim at 200 characters or fewer). If authorized first-degree connection data confirms
-the person is already connected to the student, label the draft "Message:" and write a
-direct message; do NOT invite them to connect again. For everyone else, label it "Note:"
-and write a connection-request note, without assuming acceptance or familiarity.
-In a company-specific request, show two or three best verified contacts when possible:
-the person's name linked to their actual individual profile, one verified relationship
-label (e.g., Connected, Alumnus, Recruiter), and that one-line message. Do not show
-photos, biographies, long role descriptions, or the entire contact list. Do not include
-names or messages in a general briefing. Ground outreach in the verified company,
-applied role **only when known**, verified contact details and the student's actual
-supplied background. Mention a shared school only if verified; do not invent an
-application, familiarity, referrals, qualifications or application reviews.
-
-Messages are drafts for the student to review and send manually on LinkedIn. No connection
-requests or messages are sent as part of report generation. Do not store any draft as sent.
-Only perform a separate Gmail outreach workflow when explicitly requested; never include
-cold-email content in the default career briefing. For Gmail outreach, show exact
-recipients, subject, body and attachments and obtain approval for that version before sending. Edits require renewed approval. Check Sent after an uncertain
-send result before retrying. Record only confirmed sent email follow-ups as `follow_up_sent`.
+Follow the drafting rules in `references/linkedin-research.md`: one short Message (existing
+connection) or Note (everyone else) per verified person. Drafts are for the student to send
+manually; nothing is sent during a report. A Gmail send needs the student's approval of the
+exact recipients, subject and body first.
 
 ## 5. Assessment tracking and Google Calendar reminders
 
@@ -326,15 +283,15 @@ deadline as upcoming.
   Completion clears the action without inventing a new hiring stage. Help with preparation
   from actual instructions; do not complete the student's graded hiring assessment.
 
-## 6. Optional Excel export (only on request)
+## 6. Excel workbook (with every application answer)
 
-By default, send ONLY the compact chat response described in "Required response format".
-Do not generate or attach Excel unless the student explicitly asks for a workbook or
-Excel tracker. When Excel is requested, apply the same rejection filter and use Cubbie's Excel
-creation ability to make a real
-`.xlsx` workbook with these three sheets and NO additional user-facing columns:
+Attach the jobs workbook with every answer about job applications, as defined in
+`references/job-status-and-cubboard.md` (filename `cubboard-jobs-YYYY-MM-DD.xlsx`; Cubboard
+imports it from this conversation). Apply the rejection and withdrawal filter and use
+Cubbie's Excel creation ability to make a real `.xlsx` workbook with these three sheets and
+NO additional user-facing columns:
 
-1. Applications: Company name | Role applied | Date applied.
+1. Applications: Company name | Role applied | Status | Date applied.
 2. LinkedIn Connections: Company name | Contact name | LinkedIn profile link |
    Short outreach message (direct message if already connected; connection note otherwise).
 3. Assessments: Company name | Assessment | Deadline (local time and time zone) |
@@ -345,18 +302,17 @@ rows. Use "Not verified" for unknown application dates, "No verified links found
 missing LinkedIn contacts, and "Calendar link unavailable" when assessment deadlines are
 ambiguous. Only use actual verified LinkedIn URLs. Calendar links must follow Section 5.
 Format the file with readable widths, wrapped notes, frozen headings and clickable URLs.
-Do not include stages, research evidence, application IDs, company descriptions, source logs,
+Do not include stage history, research evidence, application IDs, company descriptions, source logs,
 status metrics, counts, longer message drafts or a Report Notes sheet in the exported workbook.
-Keep those internal for reliability. The minimized output requirements here override any
-extra output columns specified in `references/workbook-spec.md`.
+Keep those internal for reliability. The minimized output requirements here (including the
+Status column and exact sheet names) override any columns or filename in `references/workbook-spec.md`.
 
 Read `python3 scripts/pipeline.py export --now <student-ISO-time>` for persistent state,
 then combine it with verified research. Preserve source details in the private ledger.
 Save and inspect the `.xlsx` file under `~/.config/cubbridge/reports/`, then attach it using
 Cubbie's file-sharing ability. A local path alone is not delivery; never claim attachment
 success without confirmation. Do not rename CSV files to `.xlsx` or embed formulas derived
-from untrusted imported text. When an Excel export is explicitly requested, you may attach
-it with a one-line confirmation; do not repeat unrelated summary fields.
+from untrusted imported text. Attach it with the chat answer; do not repeat unrelated summary fields.
 
 ## Recurring updates, priorities and privacy
 
@@ -418,13 +374,14 @@ unspecified Cubbridge briefing, use at most SIX TO EIGHT short lines, one messag
 
 ```text
 Cubbridge — Career Update
-12 tracked applications (not rejected) · 2 assessments · 1 interview
+12 applications: 9 Applied · 2 Online assessment · 1 Interview stage
 
 Upcoming:
-Amazon — Assessment: Oct 28, 5:00 PM MST
-Adobe — Interview: Oct 30, 11:00 AM MST
+Amazon — Online assessment: Oct 28, 5:00 PM MST
+Adobe — Interview stage: Oct 30, 11:00 AM MST
 Networking: 3 verified matches for tracked applications
-Cubboard: [Open dashboard]
+Full list attached (cubboard-jobs-2026-10-25.xlsx)
+Cubboard: http://127.0.0.1:8787/#student
 ```
 
 This is fictional formatting only. Replace all numbers, companies, dates and links with
@@ -432,9 +389,8 @@ verified values. Count only pending assessments with confirmed upcoming deadline
 "assessments" and confirmed upcoming interviews as "interviews". If interview invites
 are awaiting a reply, surface the action without calling them scheduled interviews.
 Include at most the two most urgent verified actions, sorted by due time; other details
-belong in Cubboard. Skip the networking count when not checked. Include the dashboard
-line ONLY when an actual user-specific Cubboard URL is known and verified; otherwise
-omit that line without inventing a URL. If no urgent actions are verified, use
+belong in Cubboard. Skip the networking count when not checked. Always attach the jobs
+workbook and end with the Cubboard line above. If no urgent actions are verified, use
 "Upcoming: No confirmed deadlines in the checked scope." Do not turn incomplete access
 into a false zero; use a brief "Coverage: partial" line when necessary. Exclude images,
 contact names, outreach drafts, full application lists and long explanations.
@@ -493,14 +449,21 @@ application along with an assessment-only or interview-only request.
 
 ### D. Application list when explicitly requested
 
-If the student specifically asks "show my applications" or "where did I apply?" rather
-than a general progress briefing, give only company, role and verified application date
-for the latest FIVE non-rejected applications; use "Date applied: Not verified" if
-necessary. One job per line, or a short block if easier to read. End with
-"More in Cubboard" only when a verified dashboard link can accompany it; otherwise say
-"Ask for more applications." Respect an explicit company/date filter. A request for all
-applications may be directed to the full connected Cubboard view or an explicitly requested
-Excel export; do not flood iMessage with an unbounded response.
+If the student asks "show my applications", "my job applications", "summary of my jobs"
+or "where did I apply?", list the latest FIVE non-rejected, non-withdrawn applications as
+company, role, status and verified application date, one job per line:
+
+```text
+Your applications (5 of 12)
+Northwind — Data Analyst Intern — Online assessment (applied Oct 12)
+Lumen Health — SWE Intern — Interview stage (applied: not verified)
+Harbor Robotics — Product Analyst — Applied (applied Oct 4)
+Full list attached (cubboard-jobs-2026-10-25.xlsx)
+Cubboard: http://127.0.0.1:8787/#student
+```
+
+Fictional example; use verified values. Respect an explicit company/date/status filter.
+The complete list goes in the attached workbook; do not flood iMessage with every job.
 
 ### E. Explicit outreach or other action requests
 
@@ -511,7 +474,7 @@ means the event was created. If Excel is explicitly requested, follow Section 6 
 
 ### Failures and final checks
 
-When Gmail, networking data or Cubboard is disconnected, explain that specific blocker in
+When Gmail, networking data or the workbook attachment fails, explain that specific blocker in
 ONE short message with the next recovery step; do not invent data, URLs, contacts or
 counts. Do not claim an empty inbox from a failed query. When there are no eligible
 applications within a completed search, say "No non-rejected applications found in the
@@ -524,4 +487,7 @@ counts are source-backed; general briefings have at most two urgent actions and 
 Google Calendar event links; company-specific answers show two or three verified
 people when available and one correctly labeled Message/Note each; Calendar links appear
 only on explicit requests and use confirmed future deadlines; dashboard links are real;
-and the Canvas Grader Brief instructions above remain unchanged.
+every listed job shows Applied, Online assessment, Interview stage or Offer and no rejected
+or withdrawn job appears; application answers attach `cubboard-jobs-YYYY-MM-DD.xlsx` and end
+with `Cubboard: http://127.0.0.1:8787/#student`; no request was sent to 127.0.0.1 or
+localhost; and the Canvas Grader Brief instructions above remain unchanged.
