@@ -93,7 +93,7 @@ def short(draw, value, width, face):
 def render(data, output):
     zone = validate(data)
     rows = data['assignments']
-    pages = [rows[i:i + 3] for i in range(0, len(rows), 3)] or [[]]
+    pages = [[row] for row in rows] or [[]]
     paths = []
     for page_index, page in enumerate(pages):
         height = 320 + max(1, len(page)) * 400 + 170

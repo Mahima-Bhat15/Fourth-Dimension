@@ -19,7 +19,7 @@ This reads assets/sample-card.json and creates a separately named fictional samp
 
 ## Visual cards
 
-For an explicitly requested two-assignment demonstration, run `~/.local/share/venvs/canvas-grader-brief/bin/python scripts/render_card.py --demo`. This reads assets/demo-card.json and writes `~/.config/canvas-grader-brief/cards/demo.png`, separately from real and sample output. Send that generated image with a short "Fictional demo" caption. Both entries and all dates/counts are fictional. Never insert them into a real Canvas brief or claim they were fetched from the account. Do not mix demo entries with real assignments. This mode is only for demo requests; regular briefs still require retrieved data.
+For an explicitly requested two-assignment demonstration, run `~/.local/share/venvs/canvas-grader-brief/bin/python scripts/render_card.py --demo`. This reads assets/demo-card.json and writes two separate files, `~/.config/canvas-grader-brief/cards/demo.png` and `~/.config/canvas-grader-brief/cards/demo-2.png`, separately from real and sample output. Attach BOTH generated PNG files as actual images with a short "Fictional demo" caption. Do not substitute text blocks, code blocks, or local paths for the cards. Both entries and all dates/counts are fictional. Never insert them into a real Canvas brief or claim they were fetched from the account. Do not mix demo entries with real assignments. This mode is only for demo requests; regular briefs still require retrieved data.
 
 Default to a PNG image card plus a short plain-text caption for assignment/grading briefs. If the user asks for text only, honor that. This is a generated image attachment, not a native interactive iMessage extension or guaranteed rich-link preview. Use the current conversation's supported file/image delivery ability. If PNG delivery is unavailable, offer a document or plain-text fallback and explain that no image was delivered.
 
@@ -33,7 +33,7 @@ Default to a PNG image card plus a short plain-text caption for assignment/gradi
 ~/.local/share/venvs/canvas-grader-brief/bin/python scripts/render_card.py --input ~/.config/canvas-grader-brief/brief.json
 ```
 
-6. Read the printed image paths and send the actual generated files to this user. Do not send a local filesystem path as if it were an accessible attachment. There are at most three assignment blocks per image, with additional images numbered automatically. For long reports, offer a document instead of flooding the thread. Rendered titles/source notes may be shortened to fit; preserve full assignment names, section variants, links, and material coverage limits in the caption or document. Links printed inside an image are not tappable; send original authorized Canvas links separately on their own lines.
+6. Read the printed image paths and send the actual generated files to this user. Do not send a local filesystem path as if it were an accessible attachment. Render exactly one assignment per image, with additional images numbered automatically. The card layout includes its own heading, assignment panel, and footer, matching the supplied reference. For long reports, offer a document instead of flooding the thread. Rendered titles/source notes may be shortened to fit; preserve full assignment names, section variants, links, and material coverage limits in the caption or document. Links printed inside an image are not tappable; send original authorized Canvas links separately on their own lines.
 7. On exit code 1, report the validation/rendering error and correct the source fields or provide a text fallback. Never replace unknown counts with zeros to make rendering succeed. Sample mode is only for an explicitly requested demonstration and is prominently labeled fictional.
 
 ## Text fallback example
@@ -54,7 +54,7 @@ Run scripts/render_card.py from the Skill folder. Python 3.10+ and Pillow==12.0.
 - `source`: truthful source label, such as `Canvas browser - CSE 579, Section A` or `User-provided snapshot`. Do not label synced or supplied data live unless it was read live.
 - `checked_at`: actual check timestamp in ISO format with offset or Z. For a supplied snapshot, this is when it was inspected, not a claim its data was refreshed then; describe snapshot freshness in the coverage note.
 - `time_zone`: user's IANA time zone, for example `America/Phoenix`.
-- `assignments`: array of 0-30 records. Sort before passing to the renderer. Three records are drawn per image. More than 30 requires a separate report or document.
+- `assignments`: array of 0-30 records. Sort before passing to the renderer. Exactly one assignment is drawn per image. More than 30 requires a separate report or document.
 - Optional `range_label` and `coverage_note`: short strings displayed in the header/footer. Keep important warnings in the caption too, since long strings are shortened to fit.
 
 ## Assignment fields
