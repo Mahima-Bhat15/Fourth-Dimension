@@ -1,0 +1,31 @@
+{
+  "source": "FICTIONAL DEMO - not live Canvas",
+  "checked_at": "2026-10-24T16:46:00-07:00",
+  "time_zone": "America/Phoenix",
+  "range_label": "Upcoming assignments · Arizona time",
+  "coverage_note": "Two fictional demo assignments. No real Canvas data used.",
+  "assignments": [
+    {
+      "course": "CSE 579 · Demo",
+      "name": "Assignment 2: Search Algorithms",
+      "due_at": "2026-11-02T06:59:00Z",
+      "grading_due_at": "2026-11-05T00:00:00Z",
+      "points_possible": 100,
+      "assignment_group_weight_pct": 10,
+      "students_submitted": 38,
+      "eligible_students": 45,
+      "needs_grading": 12
+    },
+    {
+      "course": "CSE 572 · Demo",
+      "name": "Project Proposal",
+      "due_at": "2026-11-04T06:59:00Z",
+      "grading_due_at": "2026-11-07T00:00:00Z",
+      "points_possible": 50,
+      "assignment_group_weight_pct": 20,
+      "students_submitted": 24,
+      "eligible_students": 40,
+      "needs_grading": 8
+    }
+  ]
+}
