@@ -46,6 +46,85 @@ This version reads workload information. It does not evaluate submissions or wri
 
 No API keys are needed for the renderer; Pillow is installed in a private virtual environment. Outside Cubbie, an agent can summarize an authorized export as a snapshot and render the same card.
 
+# Cubbridge — Career Applications, Networking, and Assessments
+You applied. Now what?
+
+Cubbridge is a career-focused Cubbie Skill that turns authorized Gmail application updates into clear next steps: which roles you applied for, what assessments are coming up, and which verified recruiters or alumni might be worth contacting. It is designed for short, useful iMessage responses; Cubboard is the planned place for deeper application histories, contact lists, and drafts.
+What Cubbridge does
+Feature	What you can ask	What you get
+Application tracking	“Cubbridge, check my applications from the last 90 days.”	Role-by-role application records based on authorized Gmail evidence
+Recruiter and alumni discovery	“Find recruiters or alumni at Microsoft.”	Up to three verified individual LinkedIn profiles, when available
+Personalized networking	“Draft a LinkedIn note for these contacts.”	Short, ready-to-review messages grounded in verified information
+Assessment tracking	“What assessments are due this week?”	Confirmed upcoming deadlines, with ambiguous dates clearly flagged
+Calendar support	“Add this assessment deadline to Google Calendar.”	An approval-based event workflow or a prefilled link, as appropriate
+Excel export	“Export my career tracker to Excel.”	An optional three-sheet .xlsx workbook
+
+
+## How it works
+1. Check applications. With the student's permission, Cubbie searches connected Gmail for application confirmations, recruiter replies, assessments, interviews, offers, and rejections. Cubbridge groups messages by company, role, and requisition when available. Different roles at the same company stay separate.
+2. Reconcile hiring status. Confirmed rejections are omitted from default active/non-rejected briefings only for the matching application. A missing email or partial search is never treated as proof of a particular status. Actual application dates are distinguished from confirmation-email dates.
+3. Find relevant people. For a requested company, Cubbridge uses permitted public profile research and authorized contact information to identify current recruiters, verified alumni, or confirmed existing connections. It returns two or three real individual profiles when it can verify them; otherwise it reports the gap.
+4. Prepare outreach. It drafts one short, personalized LinkedIn note per verified person (aiming for 200 characters or fewer). Confirmed first-degree connections receive a direct-message draft; everyone else receives a connection-request note. The student reviews and sends LinkedIn messages manually.
+5. Keep deadlines visible. Assessment invitations and interviews are tracked separately. A Calendar link is offered only for a verified future deadline when explicitly requested. Direct event creation requires the student's approval and verification of the saved event.
+Example Cubbie conversations
+Daily career briefing
+Cubbridge, what should I do today?
+
+Cubbridge returns a compact iMessage summary of tracked non-rejected applications, confirmed upcoming assessments and interviews, and at most two urgent actions. It does not flood the conversation with full application histories or contact lists.
+
+Networking at a specific company
+Cubbridge, find two or three recruiters or alumni at Adobe and draft connection notes.
+
+Each verified match includes an individual LinkedIn profile link, a supported relationship label, and one short draft. Cubbridge does not invent people, connection status, or profile URLs.
+
+Assessment planning
+Cubbridge, show my upcoming assessments and help me add one to Google Calendar.
+
+It distinguishes confirmed dates from deadlines that need clarification. A prefilled Google Calendar link does not mean an event has been saved.
+
+Optional workbook
+Cubbridge, export my applications, LinkedIn contacts, and assessments to Excel.
+
+## The requested workbook has three sheets:
+Sheet	Columns
+Applications	Company name · Role applied · Date applied
+LinkedIn Connections	Company name · Contact name · LinkedIn profile link · Short outreach message
+Assessments	Company name · Assessment · Deadline (local time and time zone) · Add to Google Calendar link
+
+
+Unknown application dates, missing LinkedIn links, and uncertain deadlines are labeled rather than guessed. Excel is not generated for ordinary briefings.
+Privacy and permissions
+- Gmail: Reads only within the student's authorized scope; disconnected accounts can be replaced with student-supplied hiring messages for a labeled snapshot.
+- LinkedIn: Does not claim direct LinkedIn API access, private connection-graph access, scraping, or automatic LinkedIn messaging. Existing first-degree connections are identified only from authorized evidence. Public profiles alone do not prove a connection.
+- Outreach: Email recipients, subject, body, and attachments must be shown and explicitly approved before sending. Drafting never counts as sending.
+- Calendar: Direct event creation requires approval; a successful write is reported only after verifying the event and reminder settings. Duplicate checks are part of the workflow.
+- Local data: The private application ledger is stored at ~/.config/cubbridge/pipeline.sqlite3; requested reports are stored at ~/.config/cubbridge/reports/. The Skill does not require a separate backend or API key and does not send private email, resumes, or contacts to a team backend.
+## Requirements
+- Access to Cubbie for installation and live testing.
+- Connected Gmail or student-provided application emails for a non-live snapshot.
+- Permitted Cubbie web/browser research for verified public professional profiles.
+- School information for alumni matching, when not already verified.
+- Optional connected Google Contacts and Google Calendar for richer results.
+- Python 3 to run the bundled local pipeline script.
+Install and try Cubbridge
+Publish the Cubbridge Skill folder to GitHub, then send its actual folder URL to Cubbie and approve installation. No Cubbridge publication link is assumed until the folder is confirmed live.
+
+Try:
+Cubbridge, check my recent job applications and tell me what needs attention.
+
+Or:
+Cubbridge, find verified recruiters or alumni at Microsoft and draft LinkedIn connection notes.
+
+## How the Skills fit together
+Product	Role
+Cubbie	Conversational assistant that invokes the relevant Skill
+Canvas Grader Brief	Canvas assignments, TA grading workload, and reminders
+Cubbridge	Applications, professional networking, assessments, and career outreach drafts
+Cubboard	Planned dashboard for detailed information, when available
+
+
+The Skills remain independent. Canvas access does not grant Gmail or LinkedIn permissions, and career workflows do not modify grades or Canvas submissions.
+
 ## Try it after publishing
 
 Text Cubbie this Skill folder link, approve installation, then send a new message:
