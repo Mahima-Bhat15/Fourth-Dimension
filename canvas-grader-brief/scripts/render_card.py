@@ -15,7 +15,6 @@ from PIL import Image, ImageDraw, ImageFont
 
 NAVY = '#18344D'
 MUTED = '#68747F'
-ORANGE = '#ED9C16'
 BG = '#F8F4EC'
 TRACK = '#EAEFF2'
 GREEN = '#167368'
@@ -40,17 +39,20 @@ def date_label(value, zone):
 def validate(data):
     if not isinstance(data, dict):
         raise ValueError('Input must be an object.')
-    for key in ('source', 'checked_at', 'time_zone'):
+    for key in ('time_zone',):
         if not isinstance(data.get(key), str) or not data[key].strip():
             raise ValueError(f'{key} is required.')
     zone = ZoneInfo(data['time_zone'])
-    date_label(data['checked_at'], zone)
+    if data.get('checked_at'):
+        date_label(data['checked_at'], zone)
     rows = data.get('assignments')
     if not isinstance(rows, list) or len(rows) > 30:
         raise ValueError('assignments must be a list of up to 30 items; split larger reports.')
     for row in rows:
-        if not isinstance(row, dict) or not all(isinstance(row.get(k), str) and row[k].strip() for k in ('course', 'name')):
-            raise ValueError('Each assignment needs course and name strings.')
+        if not isinstance(row, dict) or not isinstance(row.get('name'), str) or not row['name'].strip():
+            raise ValueError('Each assignment needs a name string.')
+        if row.get('course') is not None and not isinstance(row['course'], str):
+            raise ValueError('course must be a string when supplied.')
         for key in ('points_possible', 'assignment_group_weight_pct'):
             number(row.get(key), key)
         for key in ('students_submitted', 'eligible_students', 'needs_grading'):
@@ -90,74 +92,68 @@ def short(draw, value, width, face):
     return value + '...'
 
 
+def assignment_fields(row, zone):
+    """Only display actual values; missing fields do not reserve space."""
+    fields = []
+    if row.get('course'):
+        fields.append(('text', row['course'].upper(), 23, MUTED, True))
+    fields.append(('text', row['name'], 41, NAVY, True))
+    if row.get('due_status') == 'multiple':
+        fields.append(('text', 'Student deadlines: Multiple dates', 27, NAVY, True))
+    elif row.get('due_at'):
+        fields.append(('text', 'Due: ' + date_label(row['due_at'], zone), 27, NAVY, True))
+    marks = []
+    if row.get('points_possible') is not None:
+        marks.append(f"{row['points_possible']:g} points possible")
+    if row.get('assignment_group_weight_pct') is not None:
+        marks.append(f"Assignment-group weight {row['assignment_group_weight_pct']:g}%")
+    if marks:
+        fields.append(('text', ' · '.join(marks), 23, MUTED, False))
+    submitted, total = row.get('students_submitted'), row.get('eligible_students')
+    if submitted is not None:
+        label = f'Students submitted: {submitted:g}'
+        if total is not None and total > 0:
+            label += f' / {total:g}'
+        fields.append(('text', label, 25, NAVY, True))
+        if total is not None and total > 0:
+            fields.append(('bar', submitted / total))
+    elif total is not None:
+        fields.append(('text', f'Eligible students: {total:g}', 25, NAVY, False))
+    if row.get('needs_grading') is not None:
+        fields.append(('text', f"Needs grading: {row['needs_grading']:g}", 25, '#A56908', True))
+    if row.get('grading_due_at'):
+        fields.append(('text', 'Grading due: ' + date_label(row['grading_due_at'], zone), 24, MUTED, False))
+    return fields
+
+
 def render(data, output):
     zone = validate(data)
     rows = data['assignments']
-    pages = [rows[i:i + 3] for i in range(0, len(rows), 3)] or [[]]
+    pages = [rows[i:i + 3] for i in range(0, len(rows), 3)]
     paths = []
     for page_index, page in enumerate(pages):
-        height = 320 + max(1, len(page)) * 400 + 170
-        image = Image.new('RGB', (960, height), BG)
+        cards = [assignment_fields(row, zone) for row in page]
+        heights = [64 + sum(38 if f[0] == 'bar' else f[2] + 18 for f in fields) for fields in cards]
+        image = Image.new('RGB', (960, 64 + sum(heights) + 24 * (len(page) - 1)), BG)
         draw = ImageDraw.Draw(image)
-
-        def text(x, y, value, size=26, color=NAVY, bold=False, width=800):
-            face = font(size, bold)
-            draw.text((x, y), short(draw, value, width, face), font=face, fill=color)
-
-        text(56, 40, 'CANVAS / GRADER BRIEF', 22, MUTED, True)
-        text(56, 90, 'Your grading,', 64, NAVY, True)
-        text(56, 160, 'at a glance.', 64, NAVY, True)
-        text(56, 248, data.get('range_label') or 'Selected assignments', 26, MUTED, width=680)
-        if len(pages) > 1:
-            text(790, 250, f'{page_index + 1} / {len(pages)}', 24, MUTED, width=130)
-        if not page:
-            text(60, 360, 'No assignments in the supplied result.', 32, bold=True)
-            text(60, 420, 'Check the source and coverage before assuming nothing is due.', 24, MUTED)
-        for index, row in enumerate(page):
-            y = 310 + index * 400
-            draw.rounded_rectangle((48, y + 5, 912, y + 383), radius=30, fill='#EAE4D9')
-            draw.rounded_rectangle((48, y, 912, y + 378), radius=30, fill='white')
-            text(78, y + 25, row['course'].upper(), 23, MUTED, True, width=530)
-            draw.rounded_rectangle((718, y + 22, 878, y + 63), radius=20, fill='#FFF0D3')
-            text(738, y + 29, 'ASSIGNMENT', 17, '#926012', True, width=125)
-            text(78, y + 69, row['name'], 41, bold=True, width=790)
-            if row.get('due_status') == 'multiple':
-                due = 'Multiple deadlines - see assignment link'
-            elif row.get('due_at'):
-                due = date_label(row['due_at'], zone)
-            elif row.get('due_status') == 'no_due_date':
-                due = 'No due date'
-            else:
-                due = 'Unavailable'
-            text(78, y + 128, 'STUDENT DEADLINE', 17, MUTED, True, width=250)
-            text(78, y + 154, due, 28, bold=True)
-            points = row.get('points_possible')
-            points_text = f'{points:g} points possible' if points is not None else 'Points unavailable'
-            weight = row.get('assignment_group_weight_pct')
-            if weight is not None:
-                points_text += f'  ·  Assignment-group weight {weight:g}%'
-            text(78, y + 197, points_text, 23, MUTED)
-            submitted, total = row.get('students_submitted'), row.get('eligible_students')
-            if submitted is not None and total is not None and total > 0:
-                text(78, y + 242, f'Students submitted   {submitted:g} / {total:g}', 24, bold=True)
-                text(784, y + 242, f'{submitted / total:.0%}', 24, GREEN, True, width=90)
-                draw.rounded_rectangle((78, y + 280, 878, y + 294), radius=7, fill=TRACK)
-                if submitted > 0:
-                    draw.rounded_rectangle((78, y + 280, 78 + max(14, 800 * submitted / total), y + 294), radius=7, fill=GREEN)
-            else:
-                label = f'Students submitted: {submitted:g}' if submitted is not None else 'Submission count unavailable'
-                text(78, y + 251, label, 25, MUTED)
-            pending = row.get('needs_grading')
-            text(78, y + 321, f'Needs grading: {pending:g}' if pending is not None else 'Needs grading: unavailable', 24, '#A56908', True, width=390)
-            grading_due = 'Not specified'
-            if row.get('grading_due_at'):
-                grading_due = date_label(row['grading_due_at'], zone)
-            text(480, y + 324, 'Grading due: ' + grading_due, 19, MUTED, width=395)
-        footer = height - 148
-        draw.line((56, footer - 10, 904, footer - 10), fill='#E0D9CF', width=2)
-        text(56, footer + 6, 'Source: ' + data['source'], 21, MUTED)
-        text(56, footer + 39, 'Checked: ' + date_label(data['checked_at'], zone), 21, MUTED)
-        text(56, footer + 75, data.get('coverage_note') or 'Only verified fields shown; unavailable is not zero.', 20, MUTED)
+        y = 32
+        for fields, height in zip(cards, heights):
+            draw.rounded_rectangle((32, y + 4, 928, y + height + 4), radius=28, fill='#EAE4D9')
+            draw.rounded_rectangle((32, y, 928, y + height), radius=28, fill='white')
+            cursor = y + 28
+            for field in fields:
+                if field[0] == 'bar':
+                    ratio = field[1]
+                    draw.rounded_rectangle((64, cursor + 4, 896, cursor + 18), radius=7, fill=TRACK)
+                    if ratio > 0:
+                        draw.rounded_rectangle((64, cursor + 4, 64 + max(14, 832 * ratio), cursor + 18), radius=7, fill=GREEN)
+                    cursor += 38
+                else:
+                    _, value, size, color, bold = field
+                    face = font(size, bold)
+                    draw.text((64, cursor), short(draw, value, 832, face), font=face, fill=color)
+                    cursor += size + 18
+            y += height + 24
         destination = output if page_index == 0 else output.with_name(output.stem + f'-{page_index + 1}' + output.suffix)
         destination.parent.mkdir(parents=True, exist_ok=True)
         image.save(destination, 'PNG', optimize=True)
@@ -179,7 +175,9 @@ def main():
     try:
         data = json.loads(source.read_text())
         if args.sample:
-            data['source'] = 'FICTIONAL DEMO - not live Canvas'
+            for row in data.get('assignments', []):
+                if 'demo' not in row.get('course', '').lower():
+                    row['course'] = (row.get('course', '') + ' · DEMO').strip()
         print(json.dumps({'images': render(data, target), 'sample': args.sample}))
     except (OSError, ValueError, KeyError, TypeError) as exc:
         parser.exit(1, f'Could not render card: {exc}\n')

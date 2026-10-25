@@ -10,7 +10,7 @@ The Skill separates grading work from personal submission tasks, labels student 
 
 ## Visual iMessage cards
 
-The Skill now generates PNG image cards showing upcoming assignment names, student deadlines, points possible, and verified grading counts. Submission bars appear only with a matching verified student denominator. Missing data stays labeled unavailable. Student submission deadlines and grading deadlines remain separate. This is an image attachment; custom interactive iMessage cards are not assumed.
+The Skill now generates compact PNG image cards showing upcoming assignment names, student deadlines, points possible, and verified grading counts. Submission bars appear only with a matching verified student denominator. Missing fields are omitted completely. Cards have no banner/title, source/check-time footer, sync note, or unavailable labels; layout shrinks to the retrieved details. Student submission deadlines and grading deadlines remain separate. This is an image attachment; custom interactive iMessage cards are not assumed.
 
 The Python renderer needs Python 3.10+ and Pillow==12.0.0. Setup and commands are in SKILL.md; the schema is in references/card-format.md. The renderer works offline and never accesses Canvas credentials. Its sample data is explicitly fictional. Live PNG delivery through Cubbie still needs testing.
 

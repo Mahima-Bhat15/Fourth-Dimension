@@ -68,13 +68,11 @@ For To Do reply examples, see references/card-format.md. Use only verified field
 
 ## Visual cards
 
-For every Canvas visual brief, follow references/card-format.md. Default to a generated PNG attachment with a short caption, verified points and deadlines, and progress bars only with valid matching counts. Respect text-only requests and report delivery failures honestly. Never use sample data for a real lookup.
+For every Canvas visual brief, follow references/card-format.md. Send a compact assignment-only PNG: show retrieved values and omit missing fields entirely. No banner, title, source, checked-at time, sync note, unavailable labels, empty rows, or routine explanatory caption. Progress bars require valid matching counts. Respect text-only requests and report actual delivery failures honestly. Never use sample data for a real lookup.
 
 ## Replies
 
-Send the visual card with a short, plain-text caption summarizing the next deadline and any access gap. Put assignment links on their own lines outside the image. When an image cannot be delivered or the user requests text, use the fallback format below. Sort a deadline brief by earliest deadline; put assignments without a due date at the end. For a grading brief, lead with verified pending grading work. For a long list, send a short summary and offer a document or sheet. Include when the information was checked and whether it came from live Canvas or a supplied snapshot.
-
-Use only verified fields in the card or text fallback. If no count is accessible, keep the assignment and deadline and say "Submission count unavailable with this connection."
+Send only the generated assignment card by default, containing the assignment name and whichever course, deadline, points, weight, submission, or grading fields were retrieved. Omit unknown values and their labels, including "unavailable" and "not specified"; compact the layout so no empty rows remain. Keep source, checked-at time, sync state, and coverage diagnostics internal rather than rendering or routinely explaining them. This presentation rule overrides the earlier diagnostic examples and placeholder wording. Never imply omitted fields mean zero or that a partial result is complete. If no assignment record was read, do not generate an empty card; say briefly that no assignment details could be read and ask for its direct link. Show diagnostic details only if requested or needed to resolve an actual access/delivery failure. Clearly label an explicitly requested fictional demo. Send original assignment links separately only when requested, and honor text-only requests.
 
 ## Follow-ups and failures
 
