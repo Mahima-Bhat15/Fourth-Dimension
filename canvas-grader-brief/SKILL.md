@@ -1,6 +1,6 @@
 ---
 name: canvas-grader-brief
-description: Creates visual Canvas assignment cards with deadlines, points possible, and verified grading counts for a TA, grader, or IA. Use for "show my grading card", "upcoming assignment chart", "read my Canvas to-do", "what needs grading", "what is due November 1", or "how many students submitted". Separate personal submissions from staff work and student due dates from grading deadlines. This Skill reports workload; it does not evaluate work or change grades.
+description: Creates visual Canvas assignment cards and Google Calendar reminders for a TA, grader, or IA. Use for "show my grading card", "upcoming assignment chart", "read my Canvas to-do", "what needs grading", "what is due November 1", "how many students submitted", or "remind me to grade this assignment". Separate personal submissions from staff work and student due dates from grading deadlines. This Skill reports workload; it does not evaluate work or change grades.
 ---
 
 # Canvas Grader Brief
@@ -77,6 +77,8 @@ Send the visual card with a short, plain-text caption summarizing the next deadl
 Use only verified fields in the card or text fallback. If no count is accessible, keep the assignment and deadline and say "Submission count unavailable with this connection."
 
 ## Follow-ups and failures
+
+For assignment/grading requests such as "remind me", follow references/calendar-reminders.md and create the authorized reminder as a personal Google Calendar event with a verified notification. Resolve missing assignment/date/time details before writing. Only confirm success after reading back the actual event; do not claim a reminder was created from a generated link alone. This applies to the Canvas workflow, not unrelated career requests.
 
 - Missing staff course: ask the user to confirm the course and Canvas account; do not infer a course has no assignments from an access failure.
 - Permission denied: say "This account cannot read submission statistics for that course. Check your Canvas course permissions." Stop that retrieval rather than retrying with other accounts or guessing.

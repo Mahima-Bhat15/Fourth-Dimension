@@ -2,6 +2,10 @@
 
 A Cubbie Skill for students who also serve as Canvas TAs, graders, or instructional assistants. Ask for Canvas To Do tasks, course assignments, deadlines, submission counts, or pending grading work.
 
+## Google Calendar reminders
+
+Say "Remind me to grade Assignment 2 tomorrow at 9 am Arizona time." The Skill resolves the assignment and time, uses your connected Google Calendar, and creates a personal event with a notification at the reminder time. Missing times or ambiguous assignments are clarified first, repeated requests are checked for duplicates, and success is confirmed only after reading the event back. Your Google Calendar connection is separate from Canvas and hackathon sign-in. See references/calendar-reminders.md. Live Calendar creation still needs testing on Cubbie.
+
 ## Canvas To Do
 
 Ask: "Read my Canvas To Do for the courses I TA. Explain the deadlines and what needs grading."
